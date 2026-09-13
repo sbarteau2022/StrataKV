@@ -241,6 +241,18 @@ The empirical benchmarks demonstrate that a physical cache without workflow stee
             \textbf{CONTINUE}, & \kappa \ge 0.65 \;\land\; d_{\mathbb{H}^n} < 1.2.
         \end{cases}
     \end{equation}
+    \item \textbf{Superposition Holding Unified Function ($\Psi_{\text{holding}}$)}:
+    When the active inference engine detects trajectory drift ($\kappa < 0.65, d_{\mathbb{H}^n} \ge 1.2$), the reasoning engine refrains from premature greedy collapse or speculative thrashing (which triggers agentic suicide / the Lorentz Horizon Explosion). Instead, it enters a \textit{superposition holding state}:
+    \begin{equation}
+        |\Psi_{\text{holding}}\rangle = \sum_{m=1}^M c_m |h_m\rangle, \quad c_m = \frac{e^{-d_m} \kappa_m}{\sum_j e^{-d_j} \kappa_j},
+    \end{equation}
+    holding candidate hypotheses in un-collapsed geometric equilibrium while signaling a real-time \texttt{NUDGE} over the shared 2-way scratchboard until curvature realigns ($\kappa \ge 0.65, d < 1.2$).
+    \item \textbf{Relative Read-Me Only Sub-``Atlas Spheres''}:
+    To eliminate cross-contamination, hallucination cascades, and prompt injection across the 12 silos, each hyper-specialized sub-agent receives a capability-bounded, read-only chart of the Atlas manifold:
+    \begin{equation}
+        \mathcal{A}_{\text{sub}}^{(s)} = \left\{ b \in \mathcal{S}_t \mid \text{Tier}(b) = 1 \;\lor\; \text{Silo}(b) = s \right\} \subset \mathcal{M}_{\text{Atlas}}, \quad \text{Mode} = \textbf{READ\_ONLY}.
+    \end{equation}
+    Sub-agents can query root invariants and localized context, but are strictly forbidden from writing to other silo spheres or polluting the global Master Atlas during active execution.
     \item \textbf{Progressive Phase Tier Freezing}:
     \begin{itemize}
         \item \textit{Phase 1 (Foundation)}: Dynamic intake of root objectives.

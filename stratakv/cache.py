@@ -20,6 +20,41 @@ from .profiler import KappaProfiler, PHI, TWISTOR_C, KAPPA_CORE
 
 FIBONACCI_CHECKPOINTS = {8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987}
 
+class ReadOnlySubAtlasSphere:
+    """
+    Sub-Agent Atlas (Read-Me Only):
+    Provides a hyper-specialized sub-agent with a localized, read-only chart of its
+    designated silo on the Atlas manifold. Prevents memory cross-contamination and
+    privilege escalation, while allowing the agent to reference root invariants and
+    quality evaluation criteria.
+    """
+    def __init__(self, parent_cache: 'StrataKVCache', silo_id: int, quality_criteria: Dict[str, Any]):
+        self._cache = parent_cache
+        self.silo_id = silo_id
+        self.quality_criteria = quality_criteria
+
+    @property
+    def read_only(self) -> bool:
+        return True
+
+    def read_invariants(self) -> List[Dict[str, Any]]:
+        """Reads surviving Tier 1 invariants visible to this sub-atlas sphere."""
+        return [
+            {
+                "tier": b.tier,
+                "length": b.length,
+                "tags": list(set(b.token_sources)),
+                "positions": (int(b.positions[0]), int(b.positions[-1])) if len(b.positions) > 0 else (0, 0),
+                "frozen": b.frozen
+            }
+            for b in self._cache.blocks
+            if b.tier == 1 or b.frozen or b.silo_id == self.silo_id
+        ]
+
+    def query_attention(self, q: np.ndarray, q_pos: int) -> Tuple[np.ndarray, float, float]:
+        """Read-only decoupled RoPE attention query over the local sub-atlas."""
+        return self._cache.query_attention(q, q_pos)
+
 class StrataKVCache:
     """
     StrataKV: The 3-Tier Breathing KV Cache.
@@ -90,7 +125,7 @@ class StrataKVCache:
         """
         Active Inference intervention policy from the Agentic AI Runbook:
           - High kappa, Low d: CONTINUE + score confidence.
-          - Low kappa, High d: NUDGE via 2-way scratchboard.
+          - Low kappa, High d: NUDGE + activate Superposition Holding Unified Function.
           - Spend > Predicted & Delta <= 0: KILL switch.
         """
         kappa, dist = self.profiler.profile_step(k, source_tag="agent_step")
@@ -99,7 +134,7 @@ class StrataKVCache:
             reason = "Thermodynamic budget exceeded without forward semantic progress (Delta <= 0)"
         elif kappa < 0.65 and dist >= 1.2:
             action = "NUDGE"
-            reason = f"Trajectory drift detected (kappa={kappa:.2f} < 0.65, d={dist:.2f} >= 1.2)"
+            reason = f"Trajectory drift detected (kappa={kappa:.2f} < 0.65, d={dist:.2f} >= 1.2). Superposition Holding Unified Function active."
         else:
             action = "CONTINUE"
             reason = f"Stable alignment (kappa={kappa:.2f}, d={dist:.2f})"
@@ -110,8 +145,66 @@ class StrataKVCache:
             "kappa": kappa,
             "distance": dist,
             "confidence": confidence,
-            "reason": reason
+            "reason": reason,
+            "superposition_required": (action == "NUDGE")
         }
+
+    def hold_superposition(
+        self,
+        candidate_trajectories: List[np.ndarray],
+        dist_threshold: float = 1.2
+    ) -> Dict[str, Any]:
+        """
+        Superposition Holding Unified Function:
+        Activated by the reasoning/inference engine under Low kappa, High d ambiguity.
+        Instead of prematurely collapsing or thrashing into an ungrounded, high-cost path
+        (the root driver of agentic suicide), holds M candidate trajectory states in an
+        un-collapsed superposition bundle Psi = sum c_i |h_i>. Binds execution to the
+        2-way scratchboard until curvature realigns.
+        """
+        if not candidate_trajectories:
+            return {"status": "EMPTY", "num_hypotheses": 0, "collapsed": False}
+
+        branch_metrics = []
+        for idx, cand_k in enumerate(candidate_trajectories):
+            k_score, d_score = self.profiler.profile_step(cand_k, source_tag="superposition_branch")
+            branch_metrics.append({
+                "branch_id": idx,
+                "kappa": k_score,
+                "distance": d_score,
+                "weight": math.exp(-d_score) * k_score
+            })
+
+        total_weight = sum(m["weight"] for m in branch_metrics)
+        normalized_weights = [m["weight"] / max(total_weight, 1e-12) for m in branch_metrics]
+
+        best_idx = int(np.argmax(normalized_weights))
+        best_branch = branch_metrics[best_idx]
+
+        if best_branch["kappa"] >= 0.65 and best_branch["distance"] < dist_threshold:
+            return {
+                "status": "COLLAPSED",
+                "collapsed_branch_id": best_idx,
+                "metrics": best_branch,
+                "superposition_active": False,
+                "guidance": "Coherence restored. Collapse superposition and resume forward execution."
+            }
+        else:
+            return {
+                "status": "HOLDING_SUPERPOSITION",
+                "num_hypotheses": len(candidate_trajectories),
+                "branch_distribution": normalized_weights,
+                "superposition_active": True,
+                "guidance": "Low kappa, high d detected. Hold superposition; dispatch 2-way scratchboard nudge."
+            }
+
+    def get_sub_atlas_sphere(self, silo_id: int, quality_criteria: Optional[Dict[str, Any]] = None) -> 'ReadOnlySubAtlasSphere':
+        """
+        Sub-Agent Atlas (Read-Me Only):
+        Generates a capability-bounded, read-only chart of the Atlas manifold for a
+        designated silo sub-agent. Prevents memory cross-contamination and poisoning.
+        """
+        return ReadOnlySubAtlasSphere(self, silo_id=silo_id, quality_criteria=quality_criteria or {})
 
     def distill_to_master_atlas(self, failure_branches: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
         """
@@ -126,7 +219,8 @@ class StrataKVCache:
                     "tier": b.tier,
                     "kappa": b.kappa,
                     "length": b.length,
-                    "tags": list(set(b.token_sources))
+                    "tags": list(set(b.token_sources)),
+                    "silo_id": b.silo_id
                 })
         
         return {

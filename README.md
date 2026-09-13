@@ -188,14 +188,15 @@ A passive KV cache cannot survive adversarial agentic environments. StrataKV rea
 
 1. **Phase 1: Foundation Intake (Zero-Shot / Low-Rank)**:
    Dynamic intake of root user objectives and mission constraints. Only the root Coordinator can write to Tier 1.
-2. **Phase 2: Mid-Tier Execution (Freeze Tier 1 KV)**:
-   Tier 1 is frozen into an immutable preamble. External tool execution streams (Silos 8–12: compiler stderr, stdout, API returns) are quarantined to Tier 2/3.
-3. **Phase 3: High-Tier Reasoning & Active Steering**:
-   Active inference monitoring evaluates coherence $\kappa = \sigma(z)$, continuous hyperbolic distance $d_{\mathbb{H}^n}(\bar{\mathbf{k}}, \mathbf{g}) = \text{arccosh}(2 - \cos \theta)$, and token spend $\Delta$. Steering policy automatically issues `CONTINUE`, `NUDGE` (via 2-way scratchboard), or `KILL`.
+2. **Phase 2: Mid-Tier Execution (Freeze Tier 1 KV & Sub-Atlas Isolation)**:
+   Tier 1 is frozen into an immutable preamble. Each specialized sub-agent assigned to one of the 12 silos receives a capability-bounded, **Read-Me Only Sub-Atlas Sphere** ($\mathcal{A}_{\text{sub}} \subset \mathcal{M}_{\text{Atlas}}$), preventing cross-silo contamination and memory poisoning. Tool execution streams (Silos 8–12: compiler stderr, stdout, API returns) are quarantined to Tier 2/3.
+3. **Phase 3: High-Tier Reasoning & Superposition Holding Engine**:
+   Active inference monitoring evaluates coherence $\kappa = \sigma(z)$, continuous hyperbolic distance $d_{\mathbb{H}^n}(\bar{\mathbf{k}}, \mathbf{g}) = \text{arccosh}(2 - \cos \theta)$, and token spend $\Delta$. 
+   * When drift or ambiguity occurs (**Low $\kappa$, High $d$**), the reasoning engine activates the **Superposition Holding Unified Function** ($|\Psi_{\text{holding}}\rangle = \sum c_m |h_m\rangle$), holding candidate branches in geometric equilibrium without premature collapse or destructive token spending, while dispatching a `NUDGE` over the 2-way radio / scratchboard.
 4. **Phase 4: Computational Sleep & Dissolution**:
    Consolidation pulses trigger at Fibonacci intervals ($F_k \in \{8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987\}$), applying a 2% Milankovitch dissolution leak ($L_{\text{leak}} = 0.020$) that acts as computational slow-wave sleep.
 5. **Phase 5: Master Atlas Distillation**:
-   Surviving crystallized invariants are projected into Riemannian coordinates on the Hyperbolic/Toroidal Mixed Curvature Manifold $\mathcal{M} = \mathbb{H}^n \times \mathbb{T}^n$ upon task completion.
+   Surviving crystallized invariants and failure boundaries are projected into Riemannian coordinates on the Hyperbolic/Toroidal Mixed Curvature Manifold $\mathcal{M} = \mathbb{H}^n \times \mathbb{T}^n$ upon task completion.
 
 ---
 
