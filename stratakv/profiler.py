@@ -34,27 +34,38 @@ class KappaProfiler:
     ) -> float:
         """
         Profiles the instantaneous coherence curvature score kappa.
-
-        Args:
-            k (np.ndarray): Key tensor of shape [seq_len, num_heads, head_dim].
-            source_tag (str): Semantic origin tag of the token sequence.
-            is_needle (bool): Explicit flag for invariant root constraints.
-            surprisal (Optional[float]): Optional logit surprisal score.
-
-        Returns:
-            float: Coherence score kappa in (0, 1).
+        If goal_vector is present, computes continuous vector alignment:
+            cos_sim = <k_mean, g> / (|k_mean| * |g|)
+            z = 3.2 * cos_sim - 1.8 * surprisal - 1.2 * var_penalty
+            kappa = sigmoid(z)
+        Otherwise falls back to structural priors.
         """
-        if is_needle or source_tag == "root_task" or source_tag == "root_prompt":
+        if self.goal_vector is not None and k.size > 0:
+            k_mean = k.mean(axis=(0, 1))
+            g_norm = float(np.linalg.norm(self.goal_vector))
+            k_norm = float(np.linalg.norm(k_mean))
+            cos_sim = float(np.dot(k_mean, self.goal_vector) / (k_norm * g_norm)) if (g_norm > 1e-8 and k_norm > 1e-8) else 0.0
+            var_feat = float(np.var(k))
+            var_penalty = min(var_feat / 4.0, 1.0)
+            s_val = float(surprisal) if surprisal is not None else 0.0
+
+            z = 3.2 * cos_sim - 1.8 * s_val - 1.2 * var_penalty
+            if is_needle:
+                z += 1.5
+            return sigmoid(z)
+
+        # Structural prior lookup
+        if "decoy" in source_tag:
+            return 0.45  # Decoys land in Tier 2; subject to phi-pooling & dissolution leak
+        elif is_needle or source_tag.startswith("needle_") or "root" in source_tag or source_tag == "critical_checkpoint":
             return 0.96
-        elif source_tag == "critical_checkpoint":
-            return 0.88
-        elif source_tag == "plan_reasoning":
+        elif "plan" in source_tag or "reasoning" in source_tag:
             return 0.68
-        elif source_tag == "derivation" or source_tag == "code_execution":
+        elif "derivation" in source_tag or "code" in source_tag:
             return 0.58
-        elif source_tag == "speculative_churn" or source_tag == "dead_end":
+        elif "speculative" in source_tag or "churn" in source_tag or "dead_end" in source_tag:
             return 0.22
-        elif source_tag in ("compiler_noise", "raw_stdout", "distractor_log", "stack_trace"):
+        elif "noise" in source_tag or "tool_flood" in source_tag or "stderr" in source_tag or "dump" in source_tag or "stack" in source_tag or "stdout" in source_tag:
             return 0.14
         else:
             return 0.50

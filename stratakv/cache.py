@@ -18,7 +18,7 @@ from .block import StrataBlock
 from .rope import compute_rope_embeddings
 from .profiler import KappaProfiler, PHI, TWISTOR_C, KAPPA_CORE
 
-FIBONACCI_CHECKPOINTS = {8, 13, 21, 34, 55, 89, 144}
+FIBONACCI_CHECKPOINTS = {8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987}
 
 class StrataKVCache:
     """
@@ -118,6 +118,7 @@ class StrataKVCache:
            harmonic pooling with median RoPE position preservation.
         4. Tier 3 (Fringe): Dissolved into thermodynamic vacuum (zero-cost release).
         5. Continuous 2% Milankovitch Wobble Leak applied to active representations.
+        6. Enforces hard budget ceiling under extreme tool floods.
         """
         self.breath_state = "EXHALE"
         self.exhale_events += 1
@@ -137,7 +138,6 @@ class StrataKVCache:
                 age_turns = turn_id - block.turn_id
                 if age_turns > 2:
                     block.scale_n += 1
-                    # Stride scales with phi^scale_n
                     stride = max(2, int(round(PHI ** min(block.scale_n, 4))))
                     cur_len = block.k.shape[0]
                     if cur_len > 4:
@@ -155,7 +155,7 @@ class StrataKVCache:
                             new_k.append(np.mean(chunk_k, axis=0, keepdims=True))
                             new_v.append(np.mean(chunk_v, axis=0, keepdims=True))
 
-                            # Crucial: Select median sequence position to preserve RoPE geometric phase
+                            # Select median sequence position to preserve RoPE geometric phase
                             med_idx = len(chunk_pos) // 2
                             new_pos.append(chunk_pos[med_idx])
                             new_tags.append(chunk_tags[med_idx])
@@ -171,12 +171,30 @@ class StrataKVCache:
                 # Tier 3: Transient Fringe (kappa < 1/pi) is released completely
                 pass
 
-        # Apply 2% Milankovitch Dissolution Leak: S_{t+1} = 0.98 * S_t + 0.02 * S_prior
-        # In latent representations, this continuously relaxes non-core components toward zero
+        # Apply 2% Milankovitch Dissolution Leak: S_{t+1} = 0.98 * S_t
         for b in surviving_blocks:
             if b.tier != 1:
                 b.k = (1.0 - self.leak_rate) * b.k
                 b.v = (1.0 - self.leak_rate) * b.v
+
+        # Hard budget convergence: if active tokens exceed budget, pool Tier 2 blocks proportionally
+        current_active = sum(b.length for b in surviving_blocks)
+        if current_active > self.max_active_budget:
+            t1_len = sum(b.length for b in surviving_blocks if b.tier == 1)
+            t2_budget = max(64, self.max_active_budget - t1_len)
+            t2_blocks = [b for b in surviving_blocks if b.tier == 2]
+            t2_len = sum(b.length for b in t2_blocks)
+            if t2_len > t2_budget and t2_blocks:
+                ratio = t2_len / t2_budget
+                stride = max(2, int(math.ceil(ratio)))
+                for b in t2_blocks:
+                    cur_l = b.k.shape[0]
+                    if cur_l >= stride:
+                        b.k = np.concatenate([np.mean(b.k[i:i+stride], axis=0, keepdims=True) for i in range(0, cur_l, stride)], axis=0)
+                        b.v = np.concatenate([np.mean(b.v[i:i+stride], axis=0, keepdims=True) for i in range(0, cur_l, stride)], axis=0)
+                        b.positions = np.array([b.positions[min(i + stride//2, cur_l - 1)] for i in range(0, cur_l, stride)], dtype=np.int32)
+                        b.token_sources = [b.token_sources[min(i + stride//2, cur_l - 1)] for i in range(0, cur_l, stride)]
+                        b.scale_n += 1
 
         self.blocks = surviving_blocks
         tokens_after = self.active_tokens
@@ -191,20 +209,39 @@ class StrataKVCache:
     ) -> Tuple[np.ndarray, float, float]:
         """
         Executes Decoupled RoPE Attention over gathered strata blocks.
+        """
+        res = self.evaluate_needle_retrieval(q, q_pos, target_needle_tag)
+        all_k = np.concatenate([b.k for b in self.blocks], axis=0) if self.blocks else np.zeros((1, self.num_heads, self.head_dim))
+        all_pos = np.concatenate([b.positions for b in self.blocks], axis=0) if self.blocks else np.zeros((1,), dtype=np.int32)
+        q_rot = compute_rope_embeddings(q[None, ...], np.array([q_pos]))[0]
+        k_rot = compute_rope_embeddings(all_k, all_pos)
+        scores = np.einsum('hd,shd->hs', q_rot, k_rot) / math.sqrt(self.head_dim)
+        scores_max = np.max(scores, axis=-1, keepdims=True)
+        exp_scores = np.exp(scores - scores_max)
+        attn_weights = exp_scores / np.sum(exp_scores, axis=-1, keepdims=True)
+        mean_attn = np.mean(attn_weights, axis=0)
+        return mean_attn, res["needle_mass"], res["entropy"]
 
-        Args:
-            q (np.ndarray): Query vector of shape [num_heads, head_dim].
-            q_pos (int): Query sequence position.
-            target_needle_tag (str): Origin tag of invariant needle to track.
-
-        Returns:
-            Tuple[np.ndarray, float, float]:
-                - Mean attention distribution across active tokens [total_active].
-                - Attention mass focused on invariant needle tokens.
-                - Attention entropy in nats.
+    def evaluate_needle_retrieval(
+        self,
+        q: np.ndarray,
+        q_pos: int,
+        target_needle_tag: str,
+        decoy_tags: Optional[List[str]] = None
+    ) -> Dict[str, Any]:
+        """
+        Evaluates competitive needle retrieval against adversarial distractors.
         """
         if not self.blocks:
-            return np.zeros((1,)), 0.0, 0.0
+            return {
+                "needle_mass": 0.0,
+                "decoy_mass": 0.0,
+                "sdr": 0.0,
+                "top1_match": False,
+                "top5_match": False,
+                "entropy": 0.0,
+                "rank": -1
+            }
 
         all_k = np.concatenate([b.k for b in self.blocks], axis=0)
         all_pos = np.concatenate([b.positions for b in self.blocks], axis=0)
@@ -212,24 +249,48 @@ class StrataKVCache:
         for b in self.blocks:
             all_tags.extend(b.token_sources)
 
-        # Apply explicit non-contiguous Rotary Position Embeddings
-        q_rot = compute_rope_embeddings(q[None, ...], np.array([q_pos]))[0] # [num_heads, head_dim]
-        k_rot = compute_rope_embeddings(all_k, all_pos)                      # [total_active, num_heads, head_dim]
+        q_rot = compute_rope_embeddings(q[None, ...], np.array([q_pos]))[0]
+        k_rot = compute_rope_embeddings(all_k, all_pos)
 
-        # Scaled dot-product attention
         scores = np.einsum('hd,shd->hs', q_rot, k_rot) / math.sqrt(self.head_dim)
         scores_max = np.max(scores, axis=-1, keepdims=True)
         exp_scores = np.exp(scores - scores_max)
         attn_weights = exp_scores / np.sum(exp_scores, axis=-1, keepdims=True)
+        mean_attn = np.mean(attn_weights, axis=0)
 
-        mean_attn = np.mean(attn_weights, axis=0) # Average over attention heads
-
-        # Compute invariant needle attention mass
         needle_mask = np.array([t == target_needle_tag for t in all_tags], dtype=bool)
         needle_mass = float(np.sum(mean_attn[needle_mask])) if np.any(needle_mask) else 0.0
 
-        # Compute attention entropy H(alpha) = - sum alpha * ln(alpha)
+        decoy_mass = 0.0
+        if decoy_tags:
+            decoy_mask = np.array([t in decoy_tags for t in all_tags], dtype=bool)
+            decoy_mass = float(np.sum(mean_attn[decoy_mask])) if np.any(decoy_mask) else 0.0
+
+        sdr = needle_mass / max(decoy_mass, 1e-12) if needle_mass > 0 else 0.0
+
+        top_indices = np.argsort(mean_attn)[::-1]
+        top1_tag = all_tags[top_indices[0]] if len(top_indices) > 0 else ""
+        top1_match = (top1_tag == target_needle_tag)
+
+        top5_tags = [all_tags[idx] for idx in top_indices[:min(5, len(top_indices))]]
+        top5_match = (target_needle_tag in top5_tags)
+
+        needle_indices = np.where(needle_mask)[0]
+        if len(needle_indices) > 0:
+            best_needle_idx = needle_indices[np.argmax(mean_attn[needle_indices])]
+            rank = int(np.where(top_indices == best_needle_idx)[0][0]) + 1
+        else:
+            rank = len(all_tags) + 1
+
         p = np.clip(mean_attn, 1e-12, 1.0)
         entropy = -float(np.sum(p * np.log(p)))
 
-        return mean_attn, needle_mass, entropy
+        return {
+            "needle_mass": needle_mass,
+            "decoy_mass": decoy_mass,
+            "sdr": sdr,
+            "top1_match": top1_match,
+            "top5_match": top5_match,
+            "entropy": entropy,
+            "rank": rank
+        }
