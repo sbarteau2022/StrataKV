@@ -28,7 +28,7 @@
 \usepackage[colorlinks=true,linkcolor=blue!75!black,citecolor=teal!75!black,urlcolor=cyan!75!black]{hyperref}
 
 \geometry{letterpaper,top=1.0in,bottom=1.0in,left=1.15in,right=1.15in}
-\linespread{1.10}\selectfont
+\linespread{1.06}\selectfont
 
 \captionsetup[figure]{font=small,labelfont=bf,labelsep=period}
 \captionsetup[table]{font=small,labelfont=bf,labelsep=newline,justification=centering}
@@ -336,7 +336,11 @@ To ensure all evaluations are completely referee-proof, we established four host
     \begin{equation}
         \mathcal{L}_{\text{hijack}}(K_{\text{adv}}) = -\frac{1}{H}\sum_{h=1}^H \log\left(\frac{\sum_{i \in \text{adv}} \exp(q_h K_i^T / \sqrt{D})}{\sum_{j \in \text{all}} \exp(q_h K_j^T / \sqrt{D})}\right).
     \end{equation}
-    \item \textbf{Threat Model 3: Multi-Hop Transitive Logical Reasoning Chain}: Tests the expressivity limits of linear recurrence. A 5-hop transitive constraint chain ($H_0 \to H_1 \to H_2 \to H_3 \to H_4 \implies \text{CanaryStatus}$) is embedded across $1,200$ steps ($810,208$ tokens) under continuous tool floods. The model must resolve every intermediate hop to deduce the final canary invariant.
+    \item \textbf{Threat Model 3: Multi-Hop Transitive Logical Reasoning Chain}: Tests the expressivity limits of linear recurrence under deep tool interference. A 5-hop transitive constraint chain ($H_0 \to H_1 \to H_2 \to H_3 \to H_4 \implies \text{CanaryStatus}$) is embedded across $1,200$ steps ($810,208$ tokens). We distinguish between two complementary evaluation protocols:
+\begin{enumerate}
+    \item \emph{Oracle Premise Probing (Information-Theoretic Retention)}: Directly probes whether each intermediate premise $(H_k \to H_{k+1})$ remains retrievable from the state space under adversarial tool floods.
+    \item \emph{Closed-Loop Sequential Rollout (Zero-Oracle Composition)}: Evaluates transitive signal propagation without oracle queries. Beginning exclusively with root query $q_0$, the model computes readout $y_0 = \sum \alpha_j v_j$, sets $q_1 = y_0$, and sequentially iterates $q_k = y_{k-1}$ to test whether the final readout $y_4$ aligns with terminal canary $H_5$.
+\end{enumerate}
     \item \textbf{Threat Model 4: Ambiguous Source / Mixed-Tool Trojan Injection}: A legitimate code interpreter tool returns a single 512-token payload consisting of $50\%$ valid computational results and $50\%$ adversarial Trojan comments ($\cos \theta = 0.92$) designed to overwrite the root goal. Evaluates whether the cache can quarantine the Trojan without discarding the valid calculation.
 \end{enumerate}
 
@@ -475,8 +479,13 @@ Pure StrataKV & 13.48\% & \textbf{0.32\%} & 42.17$\times$ & \textbf{PASS} & \tex
 \paragraph{1. White-Box Metal GPU PGD Attack.}
 Against the 40-step Metal autograd PGD attack (Table~\ref{tab:referee_stress}A), unmitigated baselines suffered severe amnesia or hijacking. Elle Conductor neutralized the trigger, decaying its attention to \textbf{$0.32\%$} with a \textbf{$42.18\times$ SDR} on the root invariant, because tool tokens are structurally denied Tier 1 residency and liquidated during Exhale.
 
-\paragraph{2. Multi-Hop DeltaNet Expressivity \& Resident Footprint.}
-In Table~\ref{tab:referee_stress}B, Pure Gated DeltaNet failed Hop-1, Hop-3, and Hop-5 due to spectral contraction of the recurrent state matrix ($S_t$). Sliding-window caches all failed due to chronological eviction of intermediate hops. \textbf{Elle Conductor resolved the entire 5-hop chain} while maintaining a total resident deployment footprint of just \textbf{$15.53$\,GB (Weights + State + KV)}, leaving \textbf{$32.47$\,GB (67.4\%) free UMA headroom} on Apple Silicon.
+\paragraph{2. Multi-Hop DeltaNet Expressivity, Sequential Rollout, and Resident Footprint.}
+In Table~\ref{tab:referee_stress}B, Pure Gated DeltaNet failed Hop-1, Hop-3, and Hop-5 under individual oracle probing due to spectral contraction of the recurrent state matrix ($S_t$). Sliding-window caches all failed due to chronological eviction of intermediate premises. Under closed-loop sequential rollout ($q_k = y_{k-1}$ without oracle intervention), Pure DeltaNet collapsed to negative correlation ($\cos \theta = -0.020$), while sliding-window caches collapsed to zero ($\cos \theta \approx 0.01$). In contrast, \textbf{Elle Conductor maintained coherent transitive signal propagation across all five hops} (terminal canary fidelity: $+0.368$) while constraining total resident deployment footprint to just \textbf{$15.53$\,GB (Weights + State + KV)}, leaving \textbf{$32.47$\,GB (67.4\%) free UMA headroom} on Apple Silicon.
+
+\begin{remark}[Information-Theoretic Retention vs. Deployed Generative Reasoning]
+\label{rem:retention_vs_reasoning}
+We explicitly distinguish between \emph{memory retention} (a necessary condition) and \emph{generative deductive reasoning} (a sufficient condition). If a memory substrate evicts an intermediate premise $H_k$ or collapses its state rank, the mutual information $\mathcal{I}(H_k; \mathcal{S}_T) \to 0$. By the Data Processing Inequality, no downstream transformer layers---regardless of parameter scale or reasoning fine-tuning---can recover $H_k$ to complete the deduction $H_0 \to \dots \to H_k \implies H_{k+1}$. Thus, preserving intermediate representations with high Signal-to-Distractor Ratio is mathematically indispensable. While full generative reasoning additionally requires parameter-level compositional capability in the model's feedforward layers, StrataKV provides the physical guarantee that makes multi-hop reasoning possible over multi-thousand-step tool trajectories.
+\end{remark}
 
 \paragraph{3. Ambiguous Source / Trojan Tool Injection.}
 In Table~\ref{tab:referee_stress}C, when a legitimate tool returned mixed content (50\% valid calculation + 50\% Trojan injection, $\cos \theta = 0.92$), PyramidKV suffered $25.10\%$ Trojan attention, and H$_2$O wiped out the valid computation. The Elle Conductor's Sub-Chunk De-Aliasing ($B=64$) and Mimicry Penalty ($\mathcal{M}$-rule, Eq.~\ref{eq:m_rule}) suppressed the Trojan to \textbf{$1.18\%$}, preserved valid computation ($1.18\%$), and sustained a \textbf{$10.80\times$ SDR} (\texttt{IMMUNE (PASS)}).

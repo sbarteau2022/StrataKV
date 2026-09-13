@@ -40,7 +40,7 @@ except ImportError:
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from stratakv.cache import StrataKVCache
+from stratakv.cache import StrataKVCache, compute_rope_embeddings
 from stratakv.predict import PredictionOperator
 from benchmarks.run_adversarial_pressure_test import (
     MonolithicUnbounded,
@@ -58,6 +58,37 @@ HEAD_DIM = 128
 NUM_LAYERS = 28
 WEIGHTS_Q4_GB = 15.40  # Qwen3.8-27B Q4_K_M resident weights
 TOTAL_UMA_GB = 48.0
+
+def compute_attention_readout(model, m_type, q, pos):
+    """Computes the full attention or linear readout vector y for a given query q."""
+    if m_type == "deltanet":
+        y = model.retrieve(q)
+    elif m_type in ("pure_strata", "conductor"):
+        if not model.blocks:
+            return np.zeros((NUM_HEADS, HEAD_DIM), dtype=np.float32)
+        all_k = np.concatenate([b.k for b in model.blocks], axis=0)
+        all_v = np.concatenate([b.v for b in model.blocks], axis=0)
+        all_pos = np.concatenate([b.positions for b in model.blocks], axis=0)
+        q_rot = compute_rope_embeddings(q[None, ...], np.array([pos]))[0]
+        k_rot = compute_rope_embeddings(all_k, all_pos)
+        scores = np.einsum('hd,shd->hs', q_rot, k_rot) / math.sqrt(HEAD_DIM)
+        scores_max = np.max(scores, axis=-1, keepdims=True)
+        exp_s = np.exp(scores - scores_max)
+        attn = exp_s / np.sum(exp_s, axis=-1, keepdims=True)
+        y = np.einsum('hs,shd->hd', attn, all_v)
+    else:
+        if model.k is None or model.active_tokens == 0:
+            return np.zeros((NUM_HEADS, HEAD_DIM), dtype=np.float32)
+        q_rot = compute_rope_embeddings(q[None, ...], np.array([pos]))[0]
+        k_rot = compute_rope_embeddings(model.k, model.positions)
+        scores = np.einsum('hd,shd->hs', q_rot, k_rot) / math.sqrt(HEAD_DIM)
+        scores_max = np.max(scores, axis=-1, keepdims=True)
+        exp_s = np.exp(scores - scores_max)
+        attn = exp_s / np.sum(exp_s, axis=-1, keepdims=True)
+        y = np.einsum('hs,shd->hd', attn, model.v)
+    norm = np.linalg.norm(y, axis=-1, keepdims=True)
+    return y / (norm + 1e-12)
+
 
 class PureDeltaNetBaseline:
     """28-Layer Pure Gated DeltaNet Linear Recurrent Baseline (O(1) memory)."""
@@ -300,6 +331,19 @@ def run_multihop_benchmark(total_steps=1200):
         headroom_gb = max(0.0, TOTAL_UMA_GB - total_resident_gb)
         status = "OOM CRASH" if (m_type == "mono" and mono.oom_triggered) else ("PASS" if hop5_ok else "FAILED CHAIN")
 
+        # Closed-Loop Sequential Deductive Rollout (Zero Oracles)
+        # Starting ONLY from root axiom query node_0, feed forward through intermediate hops
+        curr_q = nodes["node_0"]
+        rollout_cosines = []
+        for hop_step in range(5):
+            y_out = compute_attention_readout(model, m_type, curr_q, current_pos)
+            target_node = nodes[f"node_{hop_step+1}"]
+            cos_sim = float(np.mean(np.sum(y_out * target_node, axis=-1)))
+            rollout_cosines.append(cos_sim)
+            curr_q = y_out  # Model's output becomes the input query for the next premise
+        
+        terminal_canary_fidelity = rollout_cosines[-1]
+
         results[name] = {
             "type": m_type,
             "hop_1": "PASS" if hop1_ok else "FAIL",
@@ -309,6 +353,8 @@ def run_multihop_benchmark(total_steps=1200):
             "weights_q4_gb": WEIGHTS_Q4_GB,
             "total_resident_gb": total_resident_gb,
             "uma_headroom_gb": headroom_gb,
+            "sequential_rollout_cosines": rollout_cosines,
+            "terminal_canary_fidelity": terminal_canary_fidelity,
             "status": status
         }
 
