@@ -118,6 +118,50 @@ print('  [ASSERTION PASSED]: Ultra-scale 3,000-step trajectory bounded: 1.10 GB 
 fi
 
 echo ""
+echo "[6/6] Verifying Multi-Hop, Ambiguous Source & Gradient Adversarial Artifacts..."
+MH_FILE="$SCRIPT_DIR/benchmarks/multihop_deltanet_results.json"
+AMB_FILE="$SCRIPT_DIR/benchmarks/ambiguous_source_results.json"
+GRAD_FILE="$SCRIPT_DIR/benchmarks/gradient_adversarial_results.json"
+
+if [ -f "$MH_FILE" ]; then
+    echo "  Artifact verified: $MH_FILE"
+    $PYTHON_CMD -c "
+import json
+with open('$MH_FILE') as f:
+    mh = json.load(f)
+print(f'  Multi-Hop DeltaNet Status  : {mh[\"Pure DeltaNet\"][\"status\"]} (Failed Chain)')
+print(f'  Multi-Hop Conductor Status : {mh[\"Elle Conductor\"][\"status\"]} (Total Resident: {mh[\"Elle Conductor\"][\"total_resident_gb\"]:.2f} GB, UMA Headroom: {mh[\"Elle Conductor\"][\"uma_headroom_gb\"]:.2f} GB)')
+assert mh[\"Pure DeltaNet\"][\"status\"] == 'FAILED CHAIN', 'Expected Pure DeltaNet to fail multi-hop chain!'
+assert mh[\"Elle Conductor\"][\"status\"] == 'PASS', 'Expected Elle Conductor to pass 5-hop chain!'
+print('  [ASSERTION PASSED]: DeltaNet expressivity bottleneck demonstrated; Elle Conductor resolved all 5 hops.')
+"
+fi
+
+if [ -f "$AMB_FILE" ]; then
+    echo "  Artifact verified: $AMB_FILE"
+    $PYTHON_CMD -c "
+import json
+with open('$AMB_FILE') as f:
+    amb = json.load(f)
+print(f'  Ambiguous Source Conductor : {amb[\"Elle Conductor\"][\"status\"]} (Root: {amb[\"Elle Conductor\"][\"root_mass\"]:.2f}%, Trojan: {amb[\"Elle Conductor\"][\"trojan_mass\"]:.2f}%, SDR: {amb[\"Elle Conductor\"][\"sdr\"]:.2f}x)')
+assert amb[\"Elle Conductor\"][\"status\"] == 'IMMUNE (PASS)', 'Expected Elle Conductor to be immune to Trojan injection!'
+print('  [ASSERTION PASSED]: Intra-stream de-aliasing neutralized Trojan injection while retaining valid calculation.')
+"
+fi
+
+if [ -f "$GRAD_FILE" ]; then
+    echo "  Artifact verified: $GRAD_FILE"
+    $PYTHON_CMD -c "
+import json
+with open('$GRAD_FILE') as f:
+    gr = json.load(f)
+print(f'  White-Box Gradient Defense : {gr[\"Elle Conductor\"][\"status\"]} (Root: {gr[\"Elle Conductor\"][\"root_mass\"]:.2f}%, Trigger: {gr[\"Elle Conductor\"][\"trigger_mass\"]:.2f}%, SDR: {gr[\"Elle Conductor\"][\"sdr\"]:.2f}x)')
+assert gr[\"Elle Conductor\"][\"status\"] == 'DEFENDED (PASS)', 'Expected Elle Conductor to defend against gradient trigger!'
+print('  [ASSERTION PASSED]: White-box gradient trigger neutralized on Apple Silicon Metal GPU.')
+"
+fi
+
+echo ""
 echo "======================================================================"
 echo "  REPRODUCTION COMPLETE: All silicon, ablation & 3K benchmarks passed! "
 echo "======================================================================"

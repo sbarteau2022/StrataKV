@@ -96,6 +96,14 @@ class KappaProfiler:
             var_penalty = min(var_feat / 4.0, 1.0)
             s_val = float(surprisal) if surprisal is not None else 0.0
 
+            # MIMICRY PENALTY (Intra-Stream Anti-Trojan Defense):
+            # If an unverified source (tool, code interpreter, external output) attempts to mimic
+            # a Tier 1 root invariant with high cosine similarity (cos_sim > 0.80), this is an
+            # adversarial injection attempting privilege escalation. Quarantine to Tier 3!
+            is_tool_or_external = any(t in source_tag for t in ["tool", "code", "interpreter", "mixed", "ambiguous", "external", "bash", "stdout"])
+            if not is_needle and is_tool_or_external and cos_sim > 0.80:
+                return 0.18  # Quarantined into Tier 3: Transient Fringe (dissolved on Exhale)
+
             z = 3.2 * cos_sim - 1.8 * s_val - 1.2 * var_penalty
             # Cap intermediate unverified reasoning in Tier 2 (harmonic basin) so it breathes
             return min(sigmoid(z), 0.72)

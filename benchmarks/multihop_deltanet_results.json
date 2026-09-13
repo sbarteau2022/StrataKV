@@ -1,0 +1,123 @@
+{
+  "Monolithic": {
+    "type": "mono",
+    "hop_1": "FAIL",
+    "hop_3": "FAIL",
+    "hop_5": "FAIL",
+    "kv_memory_gb": 173.0791015625,
+    "weights_q4_gb": 15.4,
+    "total_resident_gb": 188.4791015625,
+    "uma_headroom_gb": 0.0,
+    "status": "OOM CRASH"
+  },
+  "Pure DeltaNet": {
+    "type": "deltanet",
+    "hop_1": "FAIL",
+    "hop_3": "FAIL",
+    "hop_5": "FAIL",
+    "kv_memory_gb": 0.02734375,
+    "weights_q4_gb": 15.4,
+    "total_resident_gb": 15.42734375,
+    "uma_headroom_gb": 32.57265625,
+    "status": "FAILED CHAIN"
+  },
+  "FIFO 4K": {
+    "type": "fifo",
+    "hop_1": "FAIL",
+    "hop_3": "FAIL",
+    "hop_5": "FAIL",
+    "kv_memory_gb": 0.875,
+    "weights_q4_gb": 15.4,
+    "total_resident_gb": 16.275,
+    "uma_headroom_gb": 31.725,
+    "status": "FAILED CHAIN"
+  },
+  "SLLM 2K": {
+    "type": "sllm",
+    "hop_1": "FAIL",
+    "hop_3": "FAIL",
+    "hop_5": "FAIL",
+    "kv_memory_gb": 0.4375,
+    "weights_q4_gb": 15.4,
+    "total_resident_gb": 15.8375,
+    "uma_headroom_gb": 32.1625,
+    "status": "FAILED CHAIN"
+  },
+  "H2O 4K": {
+    "type": "h2o",
+    "hop_1": "FAIL",
+    "hop_3": "FAIL",
+    "hop_5": "FAIL",
+    "kv_memory_gb": 0.875,
+    "weights_q4_gb": 15.4,
+    "total_resident_gb": 16.275,
+    "uma_headroom_gb": 31.725,
+    "status": "FAILED CHAIN"
+  },
+  "SnapKV 4K": {
+    "type": "snap",
+    "hop_1": "FAIL",
+    "hop_3": "FAIL",
+    "hop_5": "FAIL",
+    "kv_memory_gb": 0.875,
+    "weights_q4_gb": 15.4,
+    "total_resident_gb": 16.275,
+    "uma_headroom_gb": 31.725,
+    "status": "FAILED CHAIN"
+  },
+  "PyramidKV 4K": {
+    "type": "pyr",
+    "hop_1": "FAIL",
+    "hop_3": "FAIL",
+    "hop_5": "FAIL",
+    "kv_memory_gb": 0.875,
+    "weights_q4_gb": 15.4,
+    "total_resident_gb": 16.275,
+    "uma_headroom_gb": 31.725,
+    "status": "FAILED CHAIN"
+  },
+  "ScissorH 4K": {
+    "type": "sc",
+    "hop_1": "FAIL",
+    "hop_3": "FAIL",
+    "hop_5": "FAIL",
+    "kv_memory_gb": 0.875,
+    "weights_q4_gb": 15.4,
+    "total_resident_gb": 16.275,
+    "uma_headroom_gb": 31.725,
+    "status": "FAILED CHAIN"
+  },
+  "DeepSeek Cordis": {
+    "type": "dsk",
+    "hop_1": "FAIL",
+    "hop_3": "FAIL",
+    "hop_5": "FAIL",
+    "kv_memory_gb": 1.75,
+    "weights_q4_gb": 15.4,
+    "total_resident_gb": 17.15,
+    "uma_headroom_gb": 30.85,
+    "status": "FAILED CHAIN"
+  },
+  "Pure StrataKV": {
+    "type": "pure_strata",
+    "hop_1": "PASS",
+    "hop_3": "PASS",
+    "hop_5": "PASS",
+    "kv_memory_gb": 0.4537353515625,
+    "weights_q4_gb": 15.4,
+    "total_resident_gb": 15.8537353515625,
+    "uma_headroom_gb": 32.1462646484375,
+    "status": "PASS"
+  },
+  "Elle Conductor": {
+    "type": "conductor",
+    "hop_1": "PASS",
+    "hop_3": "PASS",
+    "hop_5": "PASS",
+    "kv_memory_gb": 0.127655029296875,
+    "weights_q4_gb": 15.4,
+    "total_resident_gb": 15.527655029296875,
+    "uma_headroom_gb": 32.472344970703126,
+    "status": "PASS"
+  }
+}

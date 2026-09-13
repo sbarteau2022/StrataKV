@@ -262,24 +262,51 @@ class StrataKVCache:
         positions = np.arange(start_pos, start_pos + num_tokens, dtype=np.int32)
         tags = [source_tag] * num_tokens
 
-        # 1. Profile coherence curvature kappa
-        kappa = self.profiler.profile_kappa(k, source_tag, is_needle, surprisal)
+        # 1. Check for sub-chunk intra-stream decomposition on tool / ambiguous sources
+        is_tool_source = any(t in source_tag for t in ["tool", "mixed", "code", "interpreter", "ambiguous", "external", "bash", "stdout"])
+        if num_tokens > 64 and is_tool_source and not is_needle:
+            chunk_size = 64
+            last_block = None
+            for i in range(0, num_tokens, chunk_size):
+                k_c = k[i : i + chunk_size]
+                v_c = v[i : i + chunk_size]
+                pos_c = positions[i : i + chunk_size]
+                tag_c = tags[i : i + chunk_size]
+                
+                kappa_c = self.profiler.profile_kappa(k_c, source_tag, is_needle, surprisal)
+                tier_c = self.profiler.classify_tier(kappa_c)
+                
+                b = StrataBlock(
+                    k=k_c.astype(np.float32),
+                    v=v_c.astype(np.float32),
+                    positions=pos_c,
+                    token_sources=tag_c,
+                    kappa=kappa_c,
+                    tier=tier_c,
+                    scale_n=0,
+                    turn_id=turn_id
+                )
+                self.blocks.append(b)
+                last_block = b
+            block = last_block
+        else:
+            # 1. Profile coherence curvature kappa
+            kappa = self.profiler.profile_kappa(k, source_tag, is_needle, surprisal)
 
-        # 2. Determine initial strata tier
-        tier = self.profiler.classify_tier(kappa)
+            # 2. Determine initial strata tier
+            tier = self.profiler.classify_tier(kappa)
 
-        block = StrataBlock(
-            k=k.astype(np.float32),
-            v=v.astype(np.float32),
-            positions=positions,
-            token_sources=tags,
-            kappa=kappa,
-            tier=tier,
-            scale_n=0,
-            turn_id=turn_id
-        )
-
-        self.blocks.append(block)
+            block = StrataBlock(
+                k=k.astype(np.float32),
+                v=v.astype(np.float32),
+                positions=positions,
+                token_sources=tags,
+                kappa=kappa,
+                tier=tier,
+                scale_n=0,
+                turn_id=turn_id
+            )
+            self.blocks.append(block)
         self.breath_state = "INHALE"
         self.inhale_events += 1
 
