@@ -1,0 +1,86 @@
+{
+  "12": {
+    "turn": 12,
+    "cumulative_tokens": 7104,
+    "monolithic": {
+      "tokens": 7104,
+      "mb": 55.5,
+      "needle_mass": 0.003457714115958392,
+      "entropy": 7.800662994039127
+    },
+    "fifo_4k": {
+      "tokens": 4096,
+      "mb": 32.0,
+      "needle_mass": 0.0,
+      "entropy": 7.310141044755525
+    },
+    "streaming_llm": {
+      "tokens": 2048,
+      "mb": 16.0,
+      "needle_mass": 0.00022904563144775426,
+      "entropy": 6.722829613512361
+    },
+    "stratakv": {
+      "tokens": 1390,
+      "mb": 10.859375,
+      "needle_mass": 0.021621183289452704,
+      "entropy": 6.2323540315713055
+    }
+  },
+  "21": {
+    "turn": 21,
+    "cumulative_tokens": 8480,
+    "monolithic": {
+      "tokens": 8480,
+      "mb": 66.25,
+      "needle_mass": 0.003602082834807079,
+      "entropy": 7.7297900837016
+    },
+    "fifo_4k": {
+      "tokens": 4096,
+      "mb": 32.0,
+      "needle_mass": 0.0,
+      "entropy": 7.2122230930423905
+    },
+    "streaming_llm": {
+      "tokens": 2048,
+      "mb": 16.0,
+      "needle_mass": 0.0011743356815379128,
+      "entropy": 6.491063223301677
+    },
+    "stratakv": {
+      "tokens": 1269,
+      "mb": 9.9140625,
+      "needle_mass": 0.20831675378555986,
+      "entropy": 7.095528786465303
+    }
+  },
+  "40": {
+    "turn": 40,
+    "cumulative_tokens": 15040,
+    "monolithic": {
+      "tokens": 15040,
+      "mb": 117.5,
+      "needle_mass": 0.002013898241482401,
+      "entropy": 8.447262536973744
+    },
+    "fifo_4k": {
+      "tokens": 4096,
+      "mb": 32.0,
+      "needle_mass": 0.0,
+      "entropy": 7.042052767171715
+    },
+    "streaming_llm": {
+      "tokens": 2048,
+      "mb": 16.0,
+      "needle_mass": 0.00014697114177913327,
+      "entropy": 7.103502865553368
+    },
+    "stratakv": {
+      "tokens": 1739,
+      "mb": 13.5859375,
+      "needle_mass": 0.1409256384879003,
+      "entropy": 7.42199016655743
+    }
+  }
+}

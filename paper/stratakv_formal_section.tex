@@ -1,0 +1,106 @@
+% ==============================================================================
+% Section: The StrataKV Architecture and the Breathing Memory Manifold
+% Drop-in LaTeX specification for the Atlas Manifold Manuscript
+% ==============================================================================
+
+\section{The StrataKV Architecture: Coherent Memory Geometry and Thermodynamic Exhalation}
+\label{sec:stratakv}
+
+Autoregressive inference in autonomous multi-agent systems exhibits a catastrophic memory dilemma. In standard monolithic transformers, the key-value (KV) cache scales linearly $\mathcal{O}(T)$ with sequence length $T$. Under extended agentic loops characterized by verbose tool invocation (e.g., compiler logs, raw stdout, JSON diagnostics), unified memory architectures (UMA) on edge hardware (e.g., Apple Silicon) rapidly trigger fatal out-of-memory command buffer panics:
+\begin{equation}
+    \texttt{kIOGPUCommandBufferCallbackErrorOutOfMemory} \quad (0\text{x}00000008).
+\end{equation}
+
+Conversely, conventional context pruning architectures—including sliding-window FIFO eviction, attention sinks (\texttt{StreamingLLM} \cite{xiao2023streamingllm}), observational clustering (\texttt{SnapKV} \cite{li2024snapkv}), and layer-pyramidal budgets (\texttt{PyramidKV} \cite{zhang2024pyramidkv})—fail in non-stationary agentic environments. While effective for continuous document comprehension, these methods suffer from two lethal pathologies under tool flooding:
+\begin{enumerate}
+    \item \textbf{Catastrophic Amnesia}: Rolling FIFO buffers discard prompt constraints and needle invariants once tool output exceeds window capacity ($t > W$).
+    \item \textbf{Semantic Calcification}: Zero-leak conservative retention freezes high-surprisal error states into permanent attractor basins ($\kappa \to 1$), driving agents into rationalized tool-loop perseveration.
+\end{enumerate}
+
+To resolve this bottleneck, we formalize \texttt{StrataKV} (The Breathing Cache): a three-tier Coherent Memory Geometry (CMG) that replaces monotonic unconstrained memory growth with thermodynamic inhalation, harmonic spatial pooling, and isotropic error dissolution.
+
+% ------------------------------------------------------------------------------
+\subsection{Mathematical Formalization of the Memory Manifold}
+% ------------------------------------------------------------------------------
+
+\begin{definition}[StrataKV State Tuple]
+At turn $t$, the Breathing Cache is formalized as a partitioned state tuple:
+\begin{equation}
+    \mathcal{S}_t = \left( \mathcal{B}_t^{(1)}, \, \mathcal{B}_t^{(2)}, \, \mathcal{B}_t^{(3)}, \, \mathcal{R}_{\text{RoPE}}, \, \Phi_{\text{leak}} \right),
+\end{equation}
+where $\mathcal{B}_t^{(m)} = \{ b_{i} \}_{i=1}^{M_m}$ denotes the set of strata blocks assigned to tier $m \in \{1, 2, 3\}$, $\mathcal{R}_{\text{RoPE}}$ is the decoupled rotary phase operator, and $\Phi_{\text{leak}} = 0.020$ is the continuous Milankovitch dissipation parameter.
+\end{definition}
+
+Each block $b_i$ encapsulates keys $K_i \in \mathbb{R}^{L_i \times H \times D}$, values $V_i \in \mathbb{R}^{L_i \times H \times D}$, immutable positional coordinates $P_i \in \mathbb{N}^{L_i}$, an instantaneous coherence score $\kappa_i \in (0, 1)$, and a consolidation scale exponent $n_i \in \mathbb{N}_0$.
+
+\subsubsection{Intake Coherence Curvature ($\kappa$-Profiling)}
+Upon the arrival of an execution step with representation $(K, V)$ and semantic provenance tag $\tau$, \texttt{StrataKV} computes an instantaneous coherence curvature $\kappa \in (0, 1)$ via an asymmetric log-odds mapping:
+\begin{equation}
+    \kappa = \sigma(z) = \frac{1}{1 + e^{-z}}, \quad z \in \left(-Z, \, \frac{Z}{\varphi^2}\right),
+\end{equation}
+where $Z = 3.0$ establishes structural bounding rails, and $\varphi = \frac{1 + \sqrt{5}}{2} \approx 1.618034$ is the golden ratio. Strata tiers are assigned according to the twistor horizon $1/\pi$ and the core invariant threshold $\kappa_{\text{core}} = 0.75$:
+\begin{equation}
+    \text{Tier}(b) = 
+    \begin{cases}
+        1 \quad (\text{Invariant Core}), & \kappa \ge 0.75, \\
+        2 \quad (\text{Harmonic Basin}), & \frac{1}{\pi} \le \kappa < 0.75, \\
+        3 \quad (\text{Transient Fringe}), & \kappa < \frac{1}{\pi} \approx 0.3183.
+    \end{cases}
+\end{equation}
+
+\subsubsection{The Rajasethupathy Tri-Timer Law}
+Following neurobiological timescales of thalamocortical memory consolidation (Camta1 $\to$ Tcf4 $\to$ Ash1l \cite{rajasethupathy2025}), \texttt{StrataKV} dictates that memory tier retention timescales scale geometrically by $\varphi$:
+\begin{equation}
+    \frac{\tau_2}{\tau_1} = \frac{\tau_3}{\tau_2} = \varphi \implies \tau_k = \varphi^{k-1} \tau_1.
+\end{equation}
+Tier 3 operates on rapid turnover ($\tau_1 \sim 1\text{--}2$ turns); Tier 2 retains working hypotheses ($\tau_2 = \varphi \tau_1 \sim 5\text{--}10$ turns); Tier 1 crystallizes permanent invariants ($\tau_3 = \varphi^2 \tau_1$).
+
+% ------------------------------------------------------------------------------
+\subsection{The Thermodynamic Exhalation Operator}
+% ------------------------------------------------------------------------------
+
+When active context tokens exceed the unified memory budget $B_{\text{max}}$ or at Fibonacci pacing turns $t \in \mathcal{F} = \{8, 13, 21, 34, 55\}$, the engine executes an \textbf{Exhale Pass}:
+
+\begin{algorithm}[H]
+\caption{The StrataKV Exhale Pass}
+\begin{algorithmic}[1]
+\STATE \textbf{Sort} blocks $\{b_i\}$ descending by coherence $\kappa_i$: $\text{Core} \to \text{Harmonic} \to \text{Fringe}$.
+\FORALL{$b \in \mathcal{S}_t$}
+    \IF{$\text{Tier}(b) == 1$ \OR $\kappa_b \ge 0.75$}
+        \STATE Retain $b$ without modification (\textit{Lossless Invariant Core}).
+    \ELSIF{$\text{Tier}(b) == 2$}
+        \IF{$\text{Age}(b) > 2 \text{ turns}$}
+            \STATE Increment scale: $n \leftarrow n + 1$.
+            \STATE Compute stride: $S = \max\left(2, \, \left\lceil \varphi^{\min(n, 4)} \right\rceil \right)$.
+            \STATE Apply harmonic spatial pooling:
+            $$\bar{K}_j = \frac{1}{S}\sum_{m=0}^{S-1} K_{j \cdot S + m}, \quad \bar{V}_j = \frac{1}{S}\sum_{m=0}^{S-1} V_{j \cdot S + m}.$$
+            \STATE Retain median RoPE coordinate:
+            $$\text{pos}_j = P\left[ j \cdot S + \left\lfloor \frac{S}{2} \right\rfloor \right].$$
+        \ENDIF
+        \STATE Retain consolidated block in Tier 2.
+    \ELSE
+        \STATE \textbf{Evict} $b$ into the isotropic vacuum (\textit{Zero-Cost Landauer Release}).
+    \ENDIF
+\ENDFOR
+\STATE Apply 2\% Milankovitch Dissolution Leak to surviving Tier 2 states:
+$$K \leftarrow (1 - \Phi_{\text{leak}}) K, \quad V \leftarrow (1 - \Phi_{\text{leak}}) V, \quad \Phi_{\text{leak}} = 0.020.$$
+\end{algorithmic}
+\end{algorithm}
+
+% ------------------------------------------------------------------------------
+\subsection{Decoupled RoPE Attention and Information Preservation}
+% ------------------------------------------------------------------------------
+
+Because surviving tokens are non-contiguous in absolute time, standard rotary attention would suffer from geometric positional distortion. \texttt{StrataKV} decouples sequential indexing from spatial rotary phases. Attention weights $\alpha \in \Delta^{M-1}$ are evaluated using gathered coordinates:
+\begin{equation}
+    \text{Score}_{ij} = \frac{\langle \mathcal{R}_{\text{pos}_q}(q), \, \mathcal{R}_{P_{ij}}(K_{ij}) \rangle}{\sqrt{D}},
+\end{equation}
+where $\mathcal{R}_p(x) = x_1 \cos(p \Theta) - x_2 \sin(p \Theta) \,\|\, x_1 \sin(p \Theta) + x_2 \cos(p \Theta)$ preserves the exact pairwise rotary phase $(p_q - P_{ij})$ regardless of intervening evictions.
+
+\begin{theorem}[Attention Entropy Bounding]
+Under monolithic context growth, attention entropy diverges logarithmically: $H(\alpha) \to \ln(T)$, diluting needle retrieval. Under \texttt{StrataKV}, Tier 3 release bounds active tokens to $N \le B_{\text{max}}$, guaranteeing:
+\begin{equation}
+    \sup_t H(\alpha_t) \le \ln(B_{\text{max}}) < \ln(T_{\text{mono}}),
+\end{equation}
+maintaining sharp query focus indefinitely.
+\end{theorem}
