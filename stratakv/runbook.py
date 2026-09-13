@@ -75,6 +75,26 @@ class SuperpositionBundle:
     collapsed_branch_id: Optional[int] = None
     metrics: Optional[Dict[str, Any]] = None
 
+    def prune_speculative_corona(self, threshold: float = 0.5) -> int:
+        """
+        Prunes speculative branches that fall below the coherence-to-distance threshold,
+        defusing the Bilateral Suppression dilemma from The Signal and the Noise (Section IV).
+        Returns the number of pruned branches.
+        """
+        if not self.active or not self.branch_distribution:
+            return 0
+        original_count = len(self.branch_distribution)
+        surviving = [w for w in self.branch_distribution if w >= threshold]
+        if not surviving:
+            top_idx = int(np.argmax(self.branch_distribution))
+            surviving = [self.branch_distribution[top_idx]]
+
+        pruned_count = original_count - len(surviving)
+        total = sum(surviving)
+        self.branch_distribution = [float(w / total) for w in surviving]
+        self.num_hypotheses = len(surviving)
+        return pruned_count
+
 
 class ProvenanceQuarantine:
     """
@@ -133,13 +153,15 @@ class AgenticRunbook:
         coordinator_id: int = 0,
         leak_rate: float = 0.020,
         drift_distance_threshold: float = 1.2,
-        drift_kappa_threshold: float = 0.65
+        drift_kappa_threshold: float = 0.65,
+        apophenia_threshold: float = 1.5
     ):
         self.cache = cache
         self.coordinator_id = coordinator_id
         self.leak_rate = leak_rate
         self.drift_distance_threshold = drift_distance_threshold
         self.drift_kappa_threshold = drift_kappa_threshold
+        self.apophenia_threshold = apophenia_threshold
 
         self.phase: RunbookPhase = RunbookPhase.FOUNDATION_INTAKE
         self.step_count: int = 0
@@ -238,6 +260,11 @@ class AgenticRunbook:
         # Profile curvature kappa and hyperbolic distance d_H
         kappa, dist = self.profiler.profile_step(k, source_tag=source_tag)
 
+        # Check Apophenia Index (The Signal and the Noise, Section III)
+        t1_mass = sum(b.length for b in self.cache.blocks if b.tier == 1 or b.frozen)
+        t3_mass = sum(b.length for b in self.cache.blocks if b.tier == 3 and not b.frozen)
+        apophenia_index = self.profiler.compute_apophenia_index(t1_mass, t3_mass, dist)
+
         # Active Inference Decision Policy:
         # 1. KILL: Budget exceeded and velocity stagnant or negative
         if spend > predicted_ceiling and delta_rate <= 0.0:
@@ -248,7 +275,17 @@ class AgenticRunbook:
             )
             superposition_req = False
 
-        # 2. NUDGE: Trajectory drift detected (Low kappa, High d)
+        # 2. APOPHENIA / DRIFT INTERVENTION (The Signal and the Noise)
+        elif apophenia_index >= self.apophenia_threshold and dist >= self.drift_distance_threshold:
+            purged = self.cache.epistemic_exhale()
+            action = "NUDGE"
+            reason = (
+                f"Apophenia detected (index={apophenia_index:.2f} >= {self.apophenia_threshold}, "
+                f"dist={dist:.3f}). Executed Emergency Epistemic Exhale (purged {purged} fringe tokens)."
+            )
+            superposition_req = True
+
+        # 3. NUDGE: Trajectory drift detected (Low kappa, High d)
         elif kappa < self.drift_kappa_threshold and dist >= self.drift_distance_threshold:
             action = "NUDGE"
             reason = (

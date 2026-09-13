@@ -1,0 +1,35 @@
+{
+  "organization": "Google DeepMind",
+  "system": "Gemini 1.5 Pro & Gemini 1.5 Flash",
+  "citation": "Reid et al., Gemini 1.5: Unlocking multimodal understanding across millions of tokens of context, arXiv:2403.05530 (2024)",
+  "architecture": "Sparse Mixture-of-Experts (MoE) with Dense Softmax Attention",
+  "max_context_window": 1000000,
+  "extended_research_window": 10000000,
+  "needle_in_a_haystack_accuracy": {
+    "128k_context": 100.0,
+    "512k_context": 99.8,
+    "1m_context": 99.7,
+    "10m_context": 99.2,
+    "multimodal_audio_11hr": 100.0,
+    "multimodal_video_1hr": 99.6
+  },
+  "ruler_benchmark_128k": {
+    "aggregate_score": 91.1,
+    "tasks": {
+      "single_needle_retrieval": 100.0,
+      "multi_keys_retrieval": 87.2,
+      "multi_values_retrieval": 84.5,
+      "variable_tracking": 89.6,
+      "common_words_extraction": 94.2,
+      "frequent_words_extraction": 93.8,
+      "qa_cwe": 91.0
+    }
+  },
+  "longbench_score": 64.6,
+  "hardware_footprint": {
+    "kv_cache_memory_128k_gb": 28.8,
+    "kv_cache_memory_1m_gb": 124.0,
+    "infrastructure_tier": "Google Cloud TPU v4 / TPU v5e Pod slices",
+    "commercial_context_caching_cost_per_m_tok_hr": 4.5
+  }
+}

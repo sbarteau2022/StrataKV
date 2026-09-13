@@ -25,6 +25,21 @@ class KappaProfiler:
     def __init__(self, goal_vector: Optional[np.ndarray] = None):
         self.goal_vector = goal_vector # Optional semantic goal anchor vector
 
+    def compute_apophenia_index(
+        self,
+        tier1_mass: float,
+        tier3_mass: float,
+        dist: Optional[float] = None
+    ) -> float:
+        """
+        Computes the Apophenia Susceptibility Index (The Signal and the Noise, Section III):
+        Measures spurious over-concentration on Tier 3 fringe noise relative to Tier 1 invariant signal,
+        scaled by hyperbolic semantic drift distance.
+        """
+        effective_dist = max(dist if dist is not None else 0.5, 0.1)
+        mass_ratio = float(tier3_mass) / max(float(tier1_mass), 1e-6)
+        return float(mass_ratio * effective_dist)
+
     def compute_distance(self, k: np.ndarray) -> float:
         """
         Computes hyperbolic geodesic distance d from the root goal vector.

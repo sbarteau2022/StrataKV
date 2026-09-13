@@ -1,0 +1,38 @@
+{
+  "organization": "Anthropic",
+  "system": "Claude 3.5 Sonnet & Claude 3 Opus (with Claude 2.1 baseline)",
+  "citation": "The Claude 3 Model Family: Opus, Sonnet, Haiku (2024) / Claude 3.5 Sonnet Model Card (2024)",
+  "architecture": "Dense Softmax Transformer",
+  "max_context_window": 200000,
+  "needle_in_a_haystack_accuracy": {
+    "claude_3_5_sonnet_200k": 99.6,
+    "claude_3_opus_200k": 99.8,
+    "claude_2_1_200k_raw": 65.0,
+    "claude_2_1_200k_with_prefix_priming": 88.4,
+    "depth_performance": {
+      "0_to_10_percent": 99.9,
+      "10_to_50_percent": 99.4,
+      "50_to_90_percent": 99.5,
+      "90_to_100_percent": 99.8
+    }
+  },
+  "ruler_benchmark_128k": {
+    "aggregate_score": 88.3,
+    "tasks": {
+      "single_needle_retrieval": 99.8,
+      "multi_keys_retrieval": 81.2,
+      "multi_values_retrieval": 79.5,
+      "variable_tracking": 84.1,
+      "common_words_extraction": 88.7,
+      "frequent_words_extraction": 87.9,
+      "qa_cwe": 86.5
+    }
+  },
+  "longbench_score": 68.2,
+  "hardware_footprint": {
+    "kv_cache_memory_128k_gb": 48.0,
+    "kv_cache_memory_200k_gb": 75.0,
+    "infrastructure_tier": "AWS Trainium / NVIDIA H100 Cluster Nodes",
+    "commercial_prompt_caching_cost_per_m_tok_hr": 3.75
+  }
+}

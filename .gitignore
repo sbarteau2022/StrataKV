@@ -6,3 +6,14 @@ __pycache__/
 *.egg-info/
 dist/
 build/
+
+# Local custom test suites & uncommitted experiment runs
+tests/test_epistemic_immunity.py
+benchmarks/run_corona_pollution_test.py
+benchmarks/corona_pollution_results.json
+
+# External third-party cloned repositories (kept on disk)
+benchmarks/external/01_kamradt_niah/
+benchmarks/external/02_ruler/
+benchmarks/external/03_babilong/
+benchmarks/external/04_longbench/

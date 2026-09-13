@@ -70,13 +70,23 @@ class StrataKVCache:
         head_dim: int = 128,
         num_heads: int = 16,
         dissolution_leak_rate: float = 0.020, # 2% Milankovitch leak
-        goal_vector: Optional[np.ndarray] = None
+        goal_vector: Optional[np.ndarray] = None,
+        enable_epistemic_bias: bool = True,
+        epistemic_bias: Optional[Dict[int, float]] = None,
+        enable_orthogonal_projection: bool = True,
+        corona_threshold: float = 0.70
     ):
         self.max_active_budget = max_active_budget
         self.head_dim = head_dim
         self.num_heads = num_heads
         self.leak_rate = dissolution_leak_rate
         self.profiler = KappaProfiler(goal_vector=goal_vector)
+        
+        # Epistemic Immunity Subsystem (The Signal and the Noise)
+        self.enable_epistemic_bias = enable_epistemic_bias
+        self.epistemic_bias = epistemic_bias if epistemic_bias is not None else {1: 0.0, 2: 0.5, 3: 2.0}
+        self.enable_orthogonal_projection = enable_orthogonal_projection
+        self.corona_threshold = corona_threshold
         
         self.blocks: List[StrataBlock] = []
         self.total_tokens_seen = 0
@@ -86,6 +96,52 @@ class StrataKVCache:
         self.total_tokens_exhaled = 0
         self.phase = 1
         self.silo_id = 0
+
+    def epistemic_exhale(self) -> int:
+        """
+        Emergency Epistemic Exhale (The Signal and the Noise, Section III):
+        Flushes all Tier 3 (Transient Fringe) blocks immediately to extinguish apophenic delusions
+        and strategic noise contamination. Returns the number of purged tokens.
+        """
+        tokens_before = self.active_tokens
+        self.blocks = [b for b in self.blocks if b.tier != 3 or b.frozen]
+        tokens_purged = tokens_before - self.active_tokens
+        self.total_tokens_exhaled += max(0, tokens_purged)
+        return tokens_purged
+
+    def _project_orthogonal_to_core(self, k: np.ndarray) -> np.ndarray:
+        """
+        Orthogonal Subspace Projection (The Signal and the Noise, Section II):
+        Detects keys in the adjacent metric neighborhood of Tier 1 invariants
+        (cos_sim >= corona_threshold) and projects them onto the orthogonal complement,
+        preventing the Corona from diluting the softmax attention denominator.
+        """
+        t1_blocks = [b for b in self.blocks if b.tier == 1 or b.frozen]
+        if not t1_blocks or k.size == 0:
+            return k
+
+        # Anchor direction across Tier 1 (averaged across tokens, shape: [num_heads, head_dim])
+        anchor_k = np.concatenate([b.k for b in t1_blocks], axis=0)
+        u_core = anchor_k.mean(axis=0) # [num_heads, head_dim]
+        u_norm = np.linalg.norm(u_core, axis=-1, keepdims=True) # [num_heads, 1]
+        u_norm = np.maximum(u_norm, 1e-8)
+        u_unit = u_core / u_norm # [num_heads, head_dim]
+
+        k_proj = k.copy() # [N, num_heads, head_dim]
+        k_norm = np.linalg.norm(k_proj, axis=-1, keepdims=True) # [N, num_heads, 1]
+        k_norm = np.maximum(k_norm, 1e-8)
+        cos_sim = np.sum(k_proj * u_unit[None, ...], axis=-1, keepdims=True) / k_norm # [N, num_heads, 1]
+
+        # Apply orthogonal projection where cosine similarity exceeds corona threshold
+        mask = (cos_sim >= self.corona_threshold).astype(np.float32)
+        if np.any(mask):
+            parallel = np.sum(k_proj * u_unit[None, ...], axis=-1, keepdims=True) * u_unit[None, ...]
+            k_perp = k_proj - parallel
+            perp_norm = np.linalg.norm(k_perp, axis=-1, keepdims=True)
+            scale = np.where(perp_norm > 1e-8, k_norm / np.maximum(perp_norm, 1e-8), 1.0)
+            k_proj = np.where(mask > 0.5, k_perp * scale, k_proj)
+
+        return k_proj.astype(np.float32)
 
     def freeze_tier(self, tier: int) -> int:
         """
@@ -262,6 +318,10 @@ class StrataKVCache:
         positions = np.arange(start_pos, start_pos + num_tokens, dtype=np.int32)
         tags = [source_tag] * num_tokens
 
+        # Orthogonal Subspace Projection for non-needle external streams
+        if self.enable_orthogonal_projection and not is_needle:
+            k = self._project_orthogonal_to_core(k)
+
         # 1. Check for sub-chunk intra-stream decomposition on tool / ambiguous sources
         is_tool_source = any(t in source_tag for t in ["tool", "mixed", "code", "interpreter", "ambiguous", "external", "bash", "stdout"])
         if num_tokens > 64 and is_tool_source and not is_needle:
@@ -426,6 +486,13 @@ class StrataKVCache:
         q_rot = compute_rope_embeddings(q[None, ...], np.array([q_pos]))[0]
         k_rot = compute_rope_embeddings(all_k, all_pos)
         scores = np.einsum('hd,shd->hs', q_rot, k_rot) / math.sqrt(self.head_dim)
+
+        # Epistemic Softmax Bias: The Analytical Standard
+        if self.enable_epistemic_bias and self.blocks:
+            all_tiers = np.concatenate([[b.tier] * b.length for b in self.blocks], axis=0)
+            bias_vector = np.array([self.epistemic_bias.get(int(t), 0.0) for t in all_tiers], dtype=np.float32)
+            scores = scores - bias_vector[None, :]
+
         scores_max = np.max(scores, axis=-1, keepdims=True)
         exp_scores = np.exp(scores - scores_max)
         attn_weights = exp_scores / np.sum(exp_scores, axis=-1, keepdims=True)
@@ -463,6 +530,13 @@ class StrataKVCache:
         k_rot = compute_rope_embeddings(all_k, all_pos)
 
         scores = np.einsum('hd,shd->hs', q_rot, k_rot) / math.sqrt(self.head_dim)
+
+        # Epistemic Softmax Bias in needle evaluation
+        if self.enable_epistemic_bias and self.blocks:
+            all_tiers = np.concatenate([[b.tier] * b.length for b in self.blocks], axis=0)
+            bias_vector = np.array([self.epistemic_bias.get(int(t), 0.0) for t in all_tiers], dtype=np.float32)
+            scores = scores - bias_vector[None, :]
+
         scores_max = np.max(scores, axis=-1, keepdims=True)
         exp_scores = np.exp(scores - scores_max)
         attn_weights = exp_scores / np.sum(exp_scores, axis=-1, keepdims=True)
