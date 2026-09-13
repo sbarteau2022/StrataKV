@@ -31,6 +31,9 @@ class StrataBlock:
     tier: int
     scale_n: int = 0
     turn_id: int = 0
+    frozen: bool = False
+    phase: int = 1
+    silo_id: Optional[int] = None
 
     @property
     def length(self) -> int:

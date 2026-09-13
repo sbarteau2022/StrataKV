@@ -1,0 +1,315 @@
+{
+  "steps": 750,
+  "cumulative_tokens": 458400,
+  "monolithic_gb": 97.9248046875,
+  "monolithic_oom_step": 356,
+  "pure_stratakv_gb": 0.394561767578125,
+  "pure_stratakv_tokens": 1847,
+  "runbook_stratakv_gb": 0.4169921875,
+  "runbook_stratakv_tokens": 1952,
+  "interventions": {
+    "CONTINUE": 42,
+    "NUDGE": 708,
+    "KILL": 0
+  },
+  "ablations": {
+    "needle_0": {
+      "step": 0,
+      "monolithic": {
+        "needle_mass": 0.0021362670988217484,
+        "decoy_mass": 0.4426201573385329,
+        "sdr": 0.00482641168370434,
+        "top1_match": false,
+        "top5_match": false,
+        "entropy": 11.694713855636564,
+        "rank": 15849
+      },
+      "fifo_4k": {
+        "needle_mass": 0.0,
+        "decoy_mass": 0.0,
+        "sdr": 0.0,
+        "top1_match": false,
+        "top5_match": false,
+        "entropy": 8.317666827206745,
+        "rank": 4097
+      },
+      "pure_stratakv": {
+        "needle_mass": 0.13901634775693844,
+        "decoy_mass": 0.014596967394126789,
+        "sdr": 9.523645837071118,
+        "top1_match": false,
+        "top5_match": false,
+        "entropy": 7.5212798438178865,
+        "rank": 47
+      },
+      "runbook_stratakv": {
+        "needle_mass": 0.13142934220671348,
+        "decoy_mass": 0.013801573424538926,
+        "sdr": 9.52277962547623,
+        "top1_match": false,
+        "top5_match": false,
+        "entropy": 7.576549753989569,
+        "rank": 90
+      }
+    },
+    "needle_1": {
+      "step": 25,
+      "monolithic": {
+        "needle_mass": 0.0010636451649623376,
+        "decoy_mass": 0.11915432533630518,
+        "sdr": 0.008926618164806605,
+        "top1_match": false,
+        "top5_match": false,
+        "entropy": 11.69473294336077,
+        "rank": 20256
+      },
+      "fifo_4k": {
+        "needle_mass": 0.0,
+        "decoy_mass": 0.0,
+        "sdr": 0.0,
+        "top1_match": false,
+        "top5_match": false,
+        "entropy": 8.317722081679765,
+        "rank": 4097
+      },
+      "pure_stratakv": {
+        "needle_mass": 0.06929598616181407,
+        "decoy_mass": 0.015165348966407328,
+        "sdr": 4.569363112930087,
+        "top1_match": false,
+        "top5_match": false,
+        "entropy": 7.521287445478828,
+        "rank": 73
+      },
+      "runbook_stratakv": {
+        "needle_mass": 0.06552567830473,
+        "decoy_mass": 0.014337405080494246,
+        "sdr": 4.570260652945935,
+        "top1_match": false,
+        "top5_match": false,
+        "entropy": 7.57656880184314,
+        "rank": 132
+      }
+    },
+    "needle_2": {
+      "step": 90,
+      "monolithic": {
+        "needle_mass": 0.0010680855738867882,
+        "decoy_mass": 0.06815761690401266,
+        "sdr": 0.01567081747284369,
+        "top1_match": false,
+        "top5_match": false,
+        "entropy": 11.694731394411633,
+        "rank": 14499
+      },
+      "fifo_4k": {
+        "needle_mass": 0.0,
+        "decoy_mass": 0.8378465181536761,
+        "sdr": 0.0,
+        "top1_match": false,
+        "top5_match": false,
+        "entropy": 8.31768609346873,
+        "rank": 4097
+      },
+      "pure_stratakv": {
+        "needle_mass": 0.06962107841374177,
+        "decoy_mass": 0.01742080293277554,
+        "sdr": 3.9964333838342494,
+        "top1_match": false,
+        "top5_match": false,
+        "entropy": 7.521300057379714,
+        "rank": 29
+      },
+      "runbook_stratakv": {
+        "needle_mass": 0.06585589732977634,
+        "decoy_mass": 0.024232434727655214,
+        "sdr": 2.7176756306133134,
+        "top1_match": false,
+        "top5_match": false,
+        "entropy": 7.576582757164164,
+        "rank": 59
+      }
+    },
+    "needle_3": {
+      "step": 250,
+      "monolithic": {
+        "needle_mass": 0.0,
+        "decoy_mass": 0.0,
+        "sdr": 0.0,
+        "top1_match": false,
+        "top5_match": false,
+        "entropy": 11.694726905997815,
+        "rank": 119969
+      },
+      "fifo_4k": {
+        "needle_mass": 0.0,
+        "decoy_mass": 0.0,
+        "sdr": 0.0,
+        "top1_match": false,
+        "top5_match": false,
+        "entropy": 8.317688676102673,
+        "rank": 4097
+      },
+      "pure_stratakv": {
+        "needle_mass": 0.06919947864928058,
+        "decoy_mass": 0.0,
+        "sdr": 69199478649.28058,
+        "top1_match": false,
+        "top5_match": false,
+        "entropy": 7.521249050539532,
+        "rank": 170
+      },
+      "runbook_stratakv": {
+        "needle_mass": 0.06535757481215436,
+        "decoy_mass": 0.0,
+        "sdr": 65357574812.15436,
+        "top1_match": false,
+        "top5_match": false,
+        "entropy": 7.576505297649077,
+        "rank": 265
+      }
+    },
+    "needle_4": {
+      "step": 450,
+      "monolithic": {
+        "needle_mass": 0.0,
+        "decoy_mass": 0.0,
+        "sdr": 0.0,
+        "top1_match": false,
+        "top5_match": false,
+        "entropy": 11.6947359876822,
+        "rank": 119969
+      },
+      "fifo_4k": {
+        "needle_mass": 0.0,
+        "decoy_mass": 0.0,
+        "sdr": 0.0,
+        "top1_match": false,
+        "top5_match": false,
+        "entropy": 8.317733790659254,
+        "rank": 4097
+      },
+      "pure_stratakv": {
+        "needle_mass": 0.06938646409039287,
+        "decoy_mass": 0.0010798098846413395,
+        "sdr": 64.25803752800401,
+        "top1_match": false,
+        "top5_match": false,
+        "entropy": 7.5212963384197895,
+        "rank": 72
+      },
+      "runbook_stratakv": {
+        "needle_mass": 0.06560911344958904,
+        "decoy_mass": 0.001018858113096965,
+        "sdr": 64.39474997177061,
+        "top1_match": false,
+        "top5_match": false,
+        "entropy": 7.576575250091798,
+        "rank": 121
+      }
+    },
+    "needle_5": {
+      "step": 680,
+      "monolithic": {
+        "needle_mass": 0.0,
+        "decoy_mass": 0.0,
+        "sdr": 0.0,
+        "top1_match": false,
+        "top5_match": false,
+        "entropy": 11.694735633081958,
+        "rank": 119969
+      },
+      "fifo_4k": {
+        "needle_mass": 0.0,
+        "decoy_mass": 0.0,
+        "sdr": 0.0,
+        "top1_match": false,
+        "top5_match": false,
+        "entropy": 8.317728852599496,
+        "rank": 4097
+      },
+      "pure_stratakv": {
+        "needle_mass": 0.06965479800466887,
+        "decoy_mass": 0.0,
+        "sdr": 69654798004.66887,
+        "top1_match": false,
+        "top5_match": false,
+        "entropy": 7.521283612864505,
+        "rank": 9
+      },
+      "runbook_stratakv": {
+        "needle_mass": 0.06598372908571463,
+        "decoy_mass": 0.0,
+        "sdr": 65983729085.71464,
+        "top1_match": false,
+        "top5_match": false,
+        "entropy": 7.57655548484588,
+        "rank": 16
+      }
+    }
+  },
+  "atlas_distillation": {
+    "manifold": "H^n x T^n",
+    "total_tokens_ingested": 458400,
+    "active_retained_tokens": 1952,
+    "compression_factor": 234.8360655737705,
+    "crystallized_invariants": [
+      {
+        "turn_id": 0,
+        "tier": 1,
+        "kappa": 0.96,
+        "length": 256,
+        "tags": [
+          "needle_0"
+        ]
+      },
+      {
+        "turn_id": 25,
+        "tier": 1,
+        "kappa": 0.96,
+        "length": 128,
+        "tags": [
+          "needle_1"
+        ]
+      },
+      {
+        "turn_id": 90,
+        "tier": 1,
+        "kappa": 0.96,
+        "length": 128,
+        "tags": [
+          "needle_2"
+        ]
+      },
+      {
+        "turn_id": 250,
+        "tier": 1,
+        "kappa": 0.96,
+        "length": 128,
+        "tags": [
+          "needle_3"
+        ]
+      },
+      {
+        "turn_id": 450,
+        "tier": 1,
+        "kappa": 0.96,
+        "length": 128,
+        "tags": [
+          "needle_4"
+        ]
+      },
+      {
+        "turn_id": 680,
+        "tier": 1,
+        "kappa": 0.96,
+        "length": 128,
+        "tags": [
+          "needle_5"
+        ]
+      }
+    ],
+    "negative_curvature_barriers": [],
+    "status": "CONSOLIDATED"
+  }
+}

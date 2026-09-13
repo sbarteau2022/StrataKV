@@ -49,6 +49,95 @@ class StrataKVCache:
         self.inhale_events = 0
         self.exhale_events = 0
         self.total_tokens_exhaled = 0
+        self.phase = 1
+        self.silo_id = 0
+
+    def freeze_tier(self, tier: int) -> int:
+        """
+        Locks all blocks within the specified tier into an immutable state.
+        Returns the count of newly frozen blocks.
+        """
+        count = 0
+        for b in self.blocks:
+            if b.tier == tier and not b.frozen:
+                b.frozen = True
+                count += 1
+        return count
+
+    def set_phase(self, phase: int) -> None:
+        """
+        Executes progressive stratified tier freezing from the Agentic AI Runbook:
+          Phase 1: Low-rank end-to-end tasks (Active intake).
+          Phase 2: Mid-tier execution -> FREEZE TIER 1 KV (Immutable Root Preamble).
+          Phase 3: High-tier execution -> Lock verified invariants; Tier 2 harmonic breathing active.
+          Phase 4: Review / Test / Refactor -> Verified state locked; testing executes in ephemeral sandbox.
+        """
+        self.phase = phase
+        if phase >= 2:
+            # Freeze genuine Tier 1 invariants (immutable, immune to dilution)
+            for b in self.blocks:
+                if b.tier == 1 or b.kappa >= KAPPA_CORE:
+                    b.frozen = True
+            # Tier 2 continues to breathe and apply the 2% Milankovitch leak to dissolve distractors!
+
+    def active_inference_evaluate(
+        self,
+        k: np.ndarray,
+        spend_tokens: int,
+        predicted_tokens: int,
+        delta_rate: float
+    ) -> Dict[str, Any]:
+        """
+        Active Inference intervention policy from the Agentic AI Runbook:
+          - High kappa, Low d: CONTINUE + score confidence.
+          - Low kappa, High d: NUDGE via 2-way scratchboard.
+          - Spend > Predicted & Delta <= 0: KILL switch.
+        """
+        kappa, dist = self.profiler.profile_step(k, source_tag="agent_step")
+        if spend_tokens > predicted_tokens and delta_rate <= 0.0:
+            action = "KILL"
+            reason = "Thermodynamic budget exceeded without forward semantic progress (Delta <= 0)"
+        elif kappa < 0.65 and dist >= 1.2:
+            action = "NUDGE"
+            reason = f"Trajectory drift detected (kappa={kappa:.2f} < 0.65, d={dist:.2f} >= 1.2)"
+        else:
+            action = "CONTINUE"
+            reason = f"Stable alignment (kappa={kappa:.2f}, d={dist:.2f})"
+        
+        confidence = float(kappa * math.exp(-min(dist, 5.0)))
+        return {
+            "action": action,
+            "kappa": kappa,
+            "distance": dist,
+            "confidence": confidence,
+            "reason": reason
+        }
+
+    def distill_to_master_atlas(self, failure_branches: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
+        """
+        Distills surviving invariants and failure logs into the Master Atlas Manifold:
+        M = H^n (Hierarchy / Radial Surprise) x T^n (Harmonic Pacing Phases).
+        """
+        invariants = []
+        for b in self.blocks:
+            if b.frozen or b.tier == 1:
+                invariants.append({
+                    "turn_id": b.turn_id,
+                    "tier": b.tier,
+                    "kappa": b.kappa,
+                    "length": b.length,
+                    "tags": list(set(b.token_sources))
+                })
+        
+        return {
+            "manifold": "H^n x T^n",
+            "total_tokens_ingested": self.total_tokens_seen,
+            "active_retained_tokens": self.active_tokens,
+            "compression_factor": self.total_tokens_seen / max(self.active_tokens, 1),
+            "crystallized_invariants": invariants,
+            "negative_curvature_barriers": failure_branches or [],
+            "status": "CONSOLIDATED"
+        }
 
     @property
     def active_tokens(self) -> int:
@@ -129,8 +218,8 @@ class StrataKVCache:
         surviving_blocks: List[StrataBlock] = []
 
         for block in self.blocks:
-            if block.tier == 1 or block.kappa >= KAPPA_CORE:
-                # Tier 1: Invariant Core is NEVER evicted or compressed
+            if block.frozen or block.tier == 1 or block.kappa >= KAPPA_CORE:
+                # Frozen blocks & Tier 1 Core: Lossless, immutable, zero eviction
                 surviving_blocks.append(block)
 
             elif block.tier == 2 or (block.kappa >= TWISTOR_C and block.kappa < KAPPA_CORE):
@@ -173,16 +262,16 @@ class StrataKVCache:
 
         # Apply 2% Milankovitch Dissolution Leak: S_{t+1} = 0.98 * S_t
         for b in surviving_blocks:
-            if b.tier != 1:
+            if b.tier != 1 and not b.frozen:
                 b.k = (1.0 - self.leak_rate) * b.k
                 b.v = (1.0 - self.leak_rate) * b.v
 
-        # Hard budget convergence: if active tokens exceed budget, pool Tier 2 blocks proportionally
+        # Hard budget convergence: if active tokens exceed budget, pool un-frozen Tier 2 blocks proportionally
         current_active = sum(b.length for b in surviving_blocks)
         if current_active > self.max_active_budget:
-            t1_len = sum(b.length for b in surviving_blocks if b.tier == 1)
+            t1_len = sum(b.length for b in surviving_blocks if b.tier == 1 or b.frozen)
             t2_budget = max(64, self.max_active_budget - t1_len)
-            t2_blocks = [b for b in surviving_blocks if b.tier == 2]
+            t2_blocks = [b for b in surviving_blocks if b.tier == 2 and not b.frozen]
             t2_len = sum(b.length for b in t2_blocks)
             if t2_len > t2_budget and t2_blocks:
                 ratio = t2_len / t2_budget
