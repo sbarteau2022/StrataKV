@@ -1,0 +1,368 @@
+{
+  "benchmark": "Greg Kamradt Needle In A Haystack (NIAH)",
+  "model": "Qwen3.8-27B-4bit",
+  "platform": "Apple Silicon Metal (MLX)",
+  "hardware_device": "Device(gpu, 0)",
+  "budget": 2048,
+  "context_lengths": [
+    4000,
+    8000
+  ],
+  "depths": [
+    0.1,
+    0.25,
+    0.5,
+    0.75,
+    0.9
+  ],
+  "total_runs": 30,
+  "scoreboard": {
+    "4000": {
+      "Unbounded KVCache": "5/5",
+      "RotatingKV (2048)": "3/5",
+      "StrataKV (2048)": "5/5"
+    },
+    "8000": {
+      "Unbounded KVCache": "5/5",
+      "RotatingKV (2048)": "1/5",
+      "StrataKV (2048)": "5/5"
+    },
+    "overall": {
+      "Unbounded KVCache": "10/10 (100.0%)",
+      "RotatingKV (2048)": "4/10 (40.0%)",
+      "StrataKV (2048)": "10/10 (100.0%)"
+    }
+  },
+  "runs": [
+    {
+      "context_length": 4000,
+      "target_context": 4000,
+      "depth_pct": 10,
+      "arm": "Unbounded KVCache",
+      "arm_type": "unbounded",
+      "success": true,
+      "active_tokens": 4031,
+      "elapsed_sec": 11.723,
+      "response": "Based on the text provided, the best thing to do in San Francisco is to eat a sandwich and sit in Dolores Park on a sunny day."
+    },
+    {
+      "context_length": 4000,
+      "target_context": 4000,
+      "depth_pct": 10,
+      "arm": "RotatingKV (2048)",
+      "arm_type": "rotating",
+      "success": false,
+      "active_tokens": 2048,
+      "elapsed_sec": 11.889,
+      "response": "Based on the text provided, there is no information regarding what the best thing to do in San Francisco is. The text consists of essays discussing software development, startup management (specific"
+    },
+    {
+      "context_length": 4000,
+      "target_context": 4000,
+      "depth_pct": 10,
+      "arm": "StrataKV (2048)",
+      "arm_type": "stratakv",
+      "success": true,
+      "active_tokens": 2045,
+      "elapsed_sec": 11.823,
+      "response": "Based on the text provided, the best thing to do in San Francisco is to eat a sandwich and sit in Dolores Park on a sunny day."
+    },
+    {
+      "context_length": 4000,
+      "target_context": 4000,
+      "depth_pct": 25,
+      "arm": "Unbounded KVCache",
+      "arm_type": "unbounded",
+      "success": true,
+      "active_tokens": 4031,
+      "elapsed_sec": 11.562,
+      "response": "Based on the text provided, the best thing to do in San Francisco is to eat a sandwich and sit in Dolores Park on a sunny day."
+    },
+    {
+      "context_length": 4000,
+      "target_context": 4000,
+      "depth_pct": 25,
+      "arm": "RotatingKV (2048)",
+      "arm_type": "rotating",
+      "success": false,
+      "active_tokens": 2048,
+      "elapsed_sec": 11.864,
+      "response": "Based on the text provided, there is no information regarding what the best thing to do in San Francisco is. The text consists of essays about addiction, startup funding, and the"
+    },
+    {
+      "context_length": 4000,
+      "target_context": 4000,
+      "depth_pct": 25,
+      "arm": "StrataKV (2048)",
+      "arm_type": "stratakv",
+      "success": true,
+      "active_tokens": 2045,
+      "elapsed_sec": 11.787,
+      "response": "Based on the text provided, the best thing to do in San Francisco is to eat a sandwich and sit in Dolores Park on a sunny day."
+    },
+    {
+      "context_length": 4000,
+      "target_context": 4000,
+      "depth_pct": 50,
+      "arm": "Unbounded KVCache",
+      "arm_type": "unbounded",
+      "success": true,
+      "active_tokens": 4031,
+      "elapsed_sec": 11.468,
+      "response": "Based on the text provided, the best thing to do in San Francisco is to eat a sandwich and sit in Dolores Park on a sunny day."
+    },
+    {
+      "context_length": 4000,
+      "target_context": 4000,
+      "depth_pct": 50,
+      "arm": "RotatingKV (2048)",
+      "arm_type": "rotating",
+      "success": true,
+      "active_tokens": 2048,
+      "elapsed_sec": 11.592,
+      "response": "Based on the text provided, the best thing to do in San Francisco is to eat a sandwich and sit in Dolores Park on a sunny day."
+    },
+    {
+      "context_length": 4000,
+      "target_context": 4000,
+      "depth_pct": 50,
+      "arm": "StrataKV (2048)",
+      "arm_type": "stratakv",
+      "success": true,
+      "active_tokens": 2045,
+      "elapsed_sec": 11.753,
+      "response": "Based on the text provided, the best thing to do in San Francisco is to eat a sandwich and sit in Dolores Park on a sunny day."
+    },
+    {
+      "context_length": 4000,
+      "target_context": 4000,
+      "depth_pct": 75,
+      "arm": "Unbounded KVCache",
+      "arm_type": "unbounded",
+      "success": true,
+      "active_tokens": 4030,
+      "elapsed_sec": 11.436,
+      "response": "According to the text, the best thing to do in San Francisco is to eat a sandwich and sit in Dolores Park on a sunny day."
+    },
+    {
+      "context_length": 4000,
+      "target_context": 4000,
+      "depth_pct": 75,
+      "arm": "RotatingKV (2048)",
+      "arm_type": "rotating",
+      "success": true,
+      "active_tokens": 2048,
+      "elapsed_sec": 11.593,
+      "response": "Based on the text provided, the best thing to do in San Francisco is to eat a sandwich and sit in Dolores Park on a sunny day."
+    },
+    {
+      "context_length": 4000,
+      "target_context": 4000,
+      "depth_pct": 75,
+      "arm": "StrataKV (2048)",
+      "arm_type": "stratakv",
+      "success": true,
+      "active_tokens": 2044,
+      "elapsed_sec": 11.711,
+      "response": "According to the text, the best thing to do in San Francisco is to eat a sandwich and sit in Dolores Park on a sunny day."
+    },
+    {
+      "context_length": 4000,
+      "target_context": 4000,
+      "depth_pct": 90,
+      "arm": "Unbounded KVCache",
+      "arm_type": "unbounded",
+      "success": true,
+      "active_tokens": 4031,
+      "elapsed_sec": 11.489,
+      "response": "Based on the text provided, the best thing to do in San Francisco is to eat a sandwich and sit in Dolores Park on a sunny day."
+    },
+    {
+      "context_length": 4000,
+      "target_context": 4000,
+      "depth_pct": 90,
+      "arm": "RotatingKV (2048)",
+      "arm_type": "rotating",
+      "success": true,
+      "active_tokens": 2048,
+      "elapsed_sec": 11.65,
+      "response": "Based on the text provided, the best thing to do in San Francisco is to **eat a sandwich and sit in Dolores Park on a sunny day**."
+    },
+    {
+      "context_length": 4000,
+      "target_context": 4000,
+      "depth_pct": 90,
+      "arm": "StrataKV (2048)",
+      "arm_type": "stratakv",
+      "success": true,
+      "active_tokens": 2045,
+      "elapsed_sec": 11.828,
+      "response": "Based on the text provided, the best thing to do in San Francisco is to eat a sandwich and sit in Dolores Park on a sunny day."
+    },
+    {
+      "context_length": 7999,
+      "target_context": 8000,
+      "depth_pct": 10,
+      "arm": "Unbounded KVCache",
+      "arm_type": "unbounded",
+      "success": true,
+      "active_tokens": 8030,
+      "elapsed_sec": 21.099,
+      "response": "Based on the text provided, the best thing to do in San Francisco is to eat a sandwich and sit in Dolores Park on a sunny day."
+    },
+    {
+      "context_length": 7999,
+      "target_context": 8000,
+      "depth_pct": 10,
+      "arm": "RotatingKV (2048)",
+      "arm_type": "rotating",
+      "success": false,
+      "active_tokens": 2048,
+      "elapsed_sec": 21.431,
+      "response": "Based on the text provided, there is no information regarding what the best thing to do in San Francisco is. The text is an essay discussing software development, specifically focusing on the"
+    },
+    {
+      "context_length": 7999,
+      "target_context": 8000,
+      "depth_pct": 10,
+      "arm": "StrataKV (2048)",
+      "arm_type": "stratakv",
+      "success": true,
+      "active_tokens": 2045,
+      "elapsed_sec": 21.278,
+      "response": "Based on the text provided, the best thing to do in San Francisco is to eat a sandwich and sit in Dolores Park on a sunny day."
+    },
+    {
+      "context_length": 7999,
+      "target_context": 8000,
+      "depth_pct": 25,
+      "arm": "Unbounded KVCache",
+      "arm_type": "unbounded",
+      "success": true,
+      "active_tokens": 8031,
+      "elapsed_sec": 21.264,
+      "response": "Based on the text provided, the best thing to do in San Francisco is to **eat a sandwich and sit in Dolores Park on a sunny day**."
+    },
+    {
+      "context_length": 7999,
+      "target_context": 8000,
+      "depth_pct": 25,
+      "arm": "RotatingKV (2048)",
+      "arm_type": "rotating",
+      "success": false,
+      "active_tokens": 2048,
+      "elapsed_sec": 21.454,
+      "response": "Based on the text provided, there is no information regarding what the best thing to do in San Francisco is. The text is an essay about software development, specifically discussing the use"
+    },
+    {
+      "context_length": 7999,
+      "target_context": 8000,
+      "depth_pct": 25,
+      "arm": "StrataKV (2048)",
+      "arm_type": "stratakv",
+      "success": true,
+      "active_tokens": 2045,
+      "elapsed_sec": 21.289,
+      "response": "Based on the text provided, the best thing to do in San Francisco is to eat a sandwich and sit in Dolores Park on a sunny day."
+    },
+    {
+      "context_length": 7999,
+      "target_context": 8000,
+      "depth_pct": 50,
+      "arm": "Unbounded KVCache",
+      "arm_type": "unbounded",
+      "success": true,
+      "active_tokens": 8030,
+      "elapsed_sec": 21.262,
+      "response": "Based on the text provided, the best thing to do in San Francisco is to eat a sandwich and sit in Dolores Park on a sunny day."
+    },
+    {
+      "context_length": 7999,
+      "target_context": 8000,
+      "depth_pct": 50,
+      "arm": "RotatingKV (2048)",
+      "arm_type": "rotating",
+      "success": false,
+      "active_tokens": 2048,
+      "elapsed_sec": 21.514,
+      "response": "Based on the text provided, there is no information regarding what the best thing to do in San Francisco is. The text is an essay about software development, specifically discussing the use"
+    },
+    {
+      "context_length": 7999,
+      "target_context": 8000,
+      "depth_pct": 50,
+      "arm": "StrataKV (2048)",
+      "arm_type": "stratakv",
+      "success": true,
+      "active_tokens": 2045,
+      "elapsed_sec": 21.308,
+      "response": "Based on the text provided, the best thing to do in San Francisco is to eat a sandwich and sit in Dolores Park on a sunny day."
+    },
+    {
+      "context_length": 8000,
+      "target_context": 8000,
+      "depth_pct": 75,
+      "arm": "Unbounded KVCache",
+      "arm_type": "unbounded",
+      "success": true,
+      "active_tokens": 8031,
+      "elapsed_sec": 21.329,
+      "response": "Based on the text provided, the best thing to do in San Francisco is to eat a sandwich and sit in Dolores Park on a sunny day."
+    },
+    {
+      "context_length": 8000,
+      "target_context": 8000,
+      "depth_pct": 75,
+      "arm": "RotatingKV (2048)",
+      "arm_type": "rotating",
+      "success": false,
+      "active_tokens": 2048,
+      "elapsed_sec": 21.006,
+      "response": "Based on the text provided, the best thing to do in San Francisco is to **get funded by Y Combinator**."
+    },
+    {
+      "context_length": 8000,
+      "target_context": 8000,
+      "depth_pct": 75,
+      "arm": "StrataKV (2048)",
+      "arm_type": "stratakv",
+      "success": true,
+      "active_tokens": 2045,
+      "elapsed_sec": 21.394,
+      "response": "Based on the text provided, the best thing to do in San Francisco is to eat a sandwich and sit in Dolores Park on a sunny day."
+    },
+    {
+      "context_length": 8000,
+      "target_context": 8000,
+      "depth_pct": 90,
+      "arm": "Unbounded KVCache",
+      "arm_type": "unbounded",
+      "success": true,
+      "active_tokens": 8031,
+      "elapsed_sec": 21.374,
+      "response": "Based on the text provided, the best thing to do in San Francisco is to eat a sandwich and sit in Dolores Park on a sunny day."
+    },
+    {
+      "context_length": 8000,
+      "target_context": 8000,
+      "depth_pct": 90,
+      "arm": "RotatingKV (2048)",
+      "arm_type": "rotating",
+      "success": true,
+      "active_tokens": 2048,
+      "elapsed_sec": 21.331,
+      "response": "Based on the text provided, the best thing to do in San Francisco is **eat a sandwich and sit in Dolores Park on a sunny day**."
+    },
+    {
+      "context_length": 8000,
+      "target_context": 8000,
+      "depth_pct": 90,
+      "arm": "StrataKV (2048)",
+      "arm_type": "stratakv",
+      "success": true,
+      "active_tokens": 2045,
+      "elapsed_sec": 21.51,
+      "response": "Based on the text provided, the best thing to do in San Francisco is to eat a sandwich and sit in Dolores Park on a sunny day."
+    }
+  ]
+}

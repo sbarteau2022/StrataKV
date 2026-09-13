@@ -238,6 +238,16 @@ Generates white-box projected gradient descent (PGD) triggers to evaluate attent
   python3 benchmarks/run_gradient_adversarial_test.py
   ```
 
+### 8. `run_live_mlx_kamradt_niah.py`
+Executes Greg Kamradt's Needle In A Haystack (NIAH) benchmark with **real weights of Qwen3.8-27B-4bit running natively on Apple Silicon Metal GPU** over 51 Paul Graham essays across 4K and 8K contexts and 5 depths (10%, 25%, 50%, 75%, 90%).
+- **Compares**: Unbounded KVCache vs. RotatingKVCache (2048) vs. StrataKVCache (2048).
+- **Result**: StrataKV achieves **100.0% accuracy (10/10)** matching Unbounded KVCache while cutting memory by **74.5%**; RotatingKVCache drops to **40.0% accuracy** due to sliding window eviction amnesia.
+- **Output Artifact**: `benchmarks/live_mlx_kamradt_niah_results.json`
+- **Command**:
+  ```bash
+  python3 benchmarks/run_live_mlx_kamradt_niah.py --contexts 4000 8000 --depths 0.10 0.25 0.50 0.75 0.90
+  ```
+
 ---
 
 ## 5. Deterministic Single-Script Reproduction
