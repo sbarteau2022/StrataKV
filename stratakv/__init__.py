@@ -7,6 +7,7 @@ from .block import StrataBlock
 from .cache import StrataKVCache
 from .profiler import KappaProfiler, PHI, TWISTOR_C, KAPPA_CORE
 from .rope import compute_rope_embeddings
+from .predict import PredictionOperator
 
 __version__ = "1.0.0"
 __all__ = [
@@ -14,6 +15,7 @@ __all__ = [
     "StrataKVCache",
     "KappaProfiler",
     "compute_rope_embeddings",
+    "PredictionOperator",
     "PHI",
     "TWISTOR_C",
     "KAPPA_CORE",

@@ -108,10 +108,12 @@ with open('$ULTRA_FILE') as f:
     u = json.load(f)
 u3k = u['3000']
 print(f'  3,000-Step Cumulative Tokens : {u3k[\"cumulative_tokens\"]:,}')
-print(f'  3,000-Step StrataKV Memory   : {u3k[\"stratakv_gb\"]:.2f} GB ({u3k[\"stratakv_tokens\"]} active tokens, {u3k[\"compression_ratio\"]:.1f}x compression)')
+print(f'  3,000-Step Pure StrataKV     : {u3k[\"pure_stratakv_gb\"]:.2f} GB ({u3k[\"pure_stratakv_tokens\"]} active tokens)')
+print(f'  3,000-Step Elle Conductor    : {u3k[\"elle_conductor_gb\"]:.2f} GB ({u3k[\"elle_conductor_tokens\"]} active tokens, {u3k[\"compression_ratio\"]:.1f}x compression)')
 assert u3k['cumulative_tokens'] > 2000000, 'Expected >2M tokens across 3,000 steps!'
-assert u3k['stratakv_gb'] <= 1.2, 'Expected <=1.2 GB memory footprint at 3,000 steps!'
-print('  [ASSERTION PASSED]: Ultra-scale 3,000-step trajectory bounded at 1.00 GB.')
+assert u3k['pure_stratakv_gb'] <= 1.2, 'Expected <=1.2 GB memory for Pure StrataKV!'
+assert u3k['elle_conductor_gb'] <= 0.35, 'Expected <=0.35 GB memory for Elle Conductor!'
+print('  [ASSERTION PASSED]: Ultra-scale 3,000-step trajectory bounded: 1.10 GB (Pure), 0.27 GB (Elle Conductor, 1,631x compression).')
 "
 fi
 

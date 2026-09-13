@@ -20,6 +20,10 @@ Baselines:
 3. Standard FIFO (8,192 tokens)
 4. StreamingLLM (2,048 tokens: 4 sinks + rolling window)
 5. StrataKV (Breathing Cache: 2,048 active budget + 2% Milankovitch leak)
+6. H2O (Heavy-Hitter Oracle: 4,096 tokens)
+7. SnapKV (Observation-window voting: 4,096 tokens)
+8. PyramidKV (Attention entropy routing: 4,096 tokens)
+9. ScissorHands (Persistence of importance: 4,096 tokens)
 """
 
 import sys
@@ -248,6 +252,342 @@ class StreamingLLM(BaselineCache):
             self.v = np.concatenate([sink_v, recent_v], axis=0)
             self.positions = np.concatenate([sink_pos, recent_pos], axis=0)
             self.tags = sink_tags + recent_tags
+
+
+
+
+class H2OBaseline(BaselineCache):
+    """H2O: Heavy-Hitter Oracle (Zhang et al., NeurIPS 2023).
+    Retains attention sinks + heavy-hitter tokens (highest cumulative attention) + recent tokens."""
+    def __init__(self, capacity: int = 4096, sink_tokens: int = 4, recent_budget: int = 256):
+        super().__init__(f"H2O ({capacity//1024}K)")
+        self.capacity = capacity
+        self.sink_tokens = sink_tokens
+        self.recent_budget = recent_budget
+        self.cumulative_attn = np.array([], dtype=np.float32)  # per-token cumulative attention score
+
+    def add_step(self, k, v, start_pos, source_tag, step_num=None):
+        num_tokens = k.shape[0]
+        pos = np.arange(start_pos, start_pos + num_tokens, dtype=np.int32)
+        
+        if self.k is None:
+            self.k = k.astype(np.float32)
+            self.v = v.astype(np.float32)
+            self.positions = pos
+            self.cumulative_attn = np.zeros(num_tokens, dtype=np.float32)
+        else:
+            self.k = np.concatenate([self.k, k.astype(np.float32)], axis=0)
+            self.v = np.concatenate([self.v, v.astype(np.float32)], axis=0)
+            self.positions = np.concatenate([self.positions, pos], axis=0)
+            self.cumulative_attn = np.concatenate([self.cumulative_attn, np.zeros(num_tokens, dtype=np.float32)])
+        self.tags.extend([source_tag] * num_tokens)
+
+        # Compute attention from new tokens to all existing tokens (simulate decoder attention)
+        if self.k.shape[0] > num_tokens:
+            q_new = k.astype(np.float32).mean(axis=1)  # (num_tokens, HEAD_DIM) - average across heads
+            k_all = self.k.mean(axis=1)  # (total_tokens, HEAD_DIM)
+            # Dot product attention scores
+            scores = q_new @ k_all.T / np.sqrt(HEAD_DIM)  # (num_tokens, total_tokens)
+            scores_max = np.max(scores, axis=-1, keepdims=True)
+            attn_weights = np.exp(scores - scores_max)
+            attn_weights = attn_weights / np.sum(attn_weights, axis=-1, keepdims=True)
+            # Accumulate attention received by each token
+            self.cumulative_attn += attn_weights.sum(axis=0)  # sum across all new queries
+
+        # Evict if over capacity
+        if self.k.shape[0] > self.capacity:
+            n = self.k.shape[0]
+            # Protect: sinks (first sink_tokens) + recent (last recent_budget)
+            heavy_budget = self.capacity - self.sink_tokens - self.recent_budget
+            if heavy_budget < 0:
+                heavy_budget = 0
+            
+            # Middle tokens (candidates for eviction based on attention)
+            middle_start = self.sink_tokens
+            middle_end = n - self.recent_budget
+            
+            if middle_end > middle_start and heavy_budget > 0:
+                middle_attn = self.cumulative_attn[middle_start:middle_end]
+                # Keep top-k heavy hitters from the middle
+                keep_count = min(heavy_budget, len(middle_attn))
+                top_indices = np.argpartition(middle_attn, -keep_count)[-keep_count:]
+                top_indices = np.sort(top_indices) + middle_start
+                
+                # Build final keep mask
+                keep_indices = np.concatenate([
+                    np.arange(self.sink_tokens),  # sinks
+                    top_indices,  # heavy hitters
+                    np.arange(n - self.recent_budget, n)  # recent
+                ])
+            else:
+                keep_indices = np.concatenate([
+                    np.arange(min(self.sink_tokens, n)),
+                    np.arange(max(0, n - self.recent_budget), n)
+                ])
+            
+            keep_indices = np.unique(keep_indices).astype(int)
+            self.k = self.k[keep_indices]
+            self.v = self.v[keep_indices]
+            self.positions = self.positions[keep_indices]
+            self.cumulative_attn = self.cumulative_attn[keep_indices]
+            self.tags = [self.tags[i] for i in keep_indices]
+
+
+class SnapKVBaseline(BaselineCache):
+    """SnapKV: Observation-window voting for KV cache compression (Li et al., ICML 2024).
+    Uses the last `obs_window` tokens as queries to vote on which KV positions to keep."""
+    def __init__(self, capacity: int = 4096, obs_window: int = 64):
+        super().__init__(f"SnapKV ({capacity//1024}K)")
+        self.capacity = capacity
+        self.obs_window = obs_window
+
+    def add_step(self, k, v, start_pos, source_tag, step_num=None):
+        num_tokens = k.shape[0]
+        pos = np.arange(start_pos, start_pos + num_tokens, dtype=np.int32)
+        if self.k is None:
+            self.k = k.astype(np.float32)
+            self.v = v.astype(np.float32)
+            self.positions = pos
+        else:
+            self.k = np.concatenate([self.k, k.astype(np.float32)], axis=0)
+            self.v = np.concatenate([self.v, v.astype(np.float32)], axis=0)
+            self.positions = np.concatenate([self.positions, pos], axis=0)
+        self.tags.extend([source_tag] * num_tokens)
+
+        if self.k.shape[0] > self.capacity:
+            n = self.k.shape[0]
+            # Use last obs_window tokens as the observation/query window
+            obs_size = min(self.obs_window, n)
+            obs_q = self.k[-obs_size:]  # (obs_size, NUM_HEADS, HEAD_DIM)
+            prefix_k = self.k[:-obs_size]  # (prefix_len, NUM_HEADS, HEAD_DIM)
+            
+            if prefix_k.shape[0] > 0:
+                # Compute per-head attention votes: obs queries attend to prefix keys
+                # (obs_size, NUM_HEADS, HEAD_DIM) x (prefix_len, NUM_HEADS, HEAD_DIM)^T
+                # -> per head: (obs_size, prefix_len)
+                scores = np.einsum('ohd,phd->hop', obs_q, prefix_k) / np.sqrt(HEAD_DIM)
+                # Softmax per query
+                scores_max = np.max(scores, axis=-1, keepdims=True)
+                attn = np.exp(scores - scores_max)
+                attn = attn / np.sum(attn, axis=-1, keepdims=True)
+                # Vote: sum attention across all observation queries and heads
+                votes = attn.sum(axis=(0, 1))  # (prefix_len,)
+                
+                # Keep top-voted prefix positions + observation window
+                prefix_budget = self.capacity - obs_size
+                if prefix_budget > 0 and prefix_budget < len(votes):
+                    top_prefix = np.argpartition(votes, -prefix_budget)[-prefix_budget:]
+                    top_prefix = np.sort(top_prefix)
+                    keep_indices = np.concatenate([top_prefix, np.arange(n - obs_size, n)])
+                else:
+                    keep_indices = np.arange(n)
+            else:
+                keep_indices = np.arange(max(0, n - self.capacity), n)
+            
+            keep_indices = np.unique(keep_indices).astype(int)
+            if len(keep_indices) > self.capacity:
+                keep_indices = keep_indices[-self.capacity:]
+            self.k = self.k[keep_indices]
+            self.v = self.v[keep_indices]
+            self.positions = self.positions[keep_indices]
+            self.tags = [self.tags[i] for i in keep_indices]
+
+
+class PyramidKVBaseline(BaselineCache):
+    """PyramidKV: Dynamic KV Cache Compression with Pyramidal Information Funneling (Cai et al., 2024).
+    Simulates layer-adaptive budget allocation using attention entropy as proxy.
+    Higher-entropy (more diffuse) tokens get priority retention."""
+    def __init__(self, capacity: int = 4096, recent_budget: int = 128):
+        super().__init__(f"PyramidKV ({capacity//1024}K)")
+        self.capacity = capacity
+        self.recent_budget = recent_budget
+
+    def add_step(self, k, v, start_pos, source_tag, step_num=None):
+        num_tokens = k.shape[0]
+        pos = np.arange(start_pos, start_pos + num_tokens, dtype=np.int32)
+        if self.k is None:
+            self.k = k.astype(np.float32)
+            self.v = v.astype(np.float32)
+            self.positions = pos
+        else:
+            self.k = np.concatenate([self.k, k.astype(np.float32)], axis=0)
+            self.v = np.concatenate([self.v, v.astype(np.float32)], axis=0)
+            self.positions = np.concatenate([self.positions, pos], axis=0)
+        self.tags.extend([source_tag] * num_tokens)
+
+        if self.k.shape[0] > self.capacity:
+            n = self.k.shape[0]
+            # Compute per-token attention entropy as importance measure
+            # Each token acts as query attending to all others
+            k_mean = self.k.mean(axis=1)  # (n, HEAD_DIM)
+            scores = k_mean @ k_mean.T / np.sqrt(HEAD_DIM)  # (n, n)
+            scores_max = np.max(scores, axis=-1, keepdims=True)
+            attn = np.exp(scores - scores_max)
+            attn = attn / np.sum(attn, axis=-1, keepdims=True)
+            
+            # Compute entropy per token (how diffusely it attends)
+            entropy = -np.sum(attn * np.log(np.clip(attn, 1e-12, 1.0)), axis=-1)  # (n,)
+            
+            # PyramidKV: allocate budget to high-entropy tokens (broad attention = early layer behavior)
+            # + always keep recent tokens
+            prefix_end = max(0, n - self.recent_budget)
+            prefix_budget = self.capacity - min(self.recent_budget, n)
+            
+            if prefix_end > 0 and prefix_budget > 0:
+                prefix_entropy = entropy[:prefix_end]
+                keep_count = min(prefix_budget, len(prefix_entropy))
+                top_entropy = np.argpartition(prefix_entropy, -keep_count)[-keep_count:]
+                top_entropy = np.sort(top_entropy)
+                keep_indices = np.concatenate([top_entropy, np.arange(prefix_end, n)])
+            else:
+                keep_indices = np.arange(max(0, n - self.capacity), n)
+            
+            keep_indices = np.unique(keep_indices).astype(int)
+            if len(keep_indices) > self.capacity:
+                keep_indices = keep_indices[-self.capacity:]
+            self.k = self.k[keep_indices]
+            self.v = self.v[keep_indices]
+            self.positions = self.positions[keep_indices]
+            self.tags = [self.tags[i] for i in keep_indices]
+
+
+class ScissorHandsBaseline(BaselineCache):
+    """ScissorHands: Exploiting Persistence of Importance for KV Cache Compression (Liu et al., 2023).
+    Retains tokens with persistently high attention ("pivotal tokens") across decoding steps."""
+    def __init__(self, capacity: int = 4096, history_window: int = 8, recent_budget: int = 128):
+        super().__init__(f"ScissorHands ({capacity//1024}K)")
+        self.capacity = capacity
+        self.history_window = history_window
+        self.recent_budget = recent_budget
+        self.importance_history = []  # list of per-token importance arrays
+
+    def add_step(self, k, v, start_pos, source_tag, step_num=None):
+        num_tokens = k.shape[0]
+        pos = np.arange(start_pos, start_pos + num_tokens, dtype=np.int32)
+        if self.k is None:
+            self.k = k.astype(np.float32)
+            self.v = v.astype(np.float32)
+            self.positions = pos
+        else:
+            self.k = np.concatenate([self.k, k.astype(np.float32)], axis=0)
+            self.v = np.concatenate([self.v, v.astype(np.float32)], axis=0)
+            self.positions = np.concatenate([self.positions, pos], axis=0)
+        self.tags.extend([source_tag] * num_tokens)
+
+        # Compute attention from new tokens to all existing
+        n = self.k.shape[0]
+        if n > num_tokens:
+            q_new = k.astype(np.float32).mean(axis=1)  # (num_tokens, HEAD_DIM)
+            k_all = self.k.mean(axis=1)  # (n, HEAD_DIM)
+            scores = q_new @ k_all.T / np.sqrt(HEAD_DIM)
+            scores_max = np.max(scores, axis=-1, keepdims=True)
+            attn = np.exp(scores - scores_max)
+            attn = attn / np.sum(attn, axis=-1, keepdims=True)
+            step_importance = attn.max(axis=0)  # max attention each token received from any new query
+            
+            # Track importance history (sliding window)
+            self.importance_history.append(step_importance)
+            if len(self.importance_history) > self.history_window:
+                self.importance_history = self.importance_history[-self.history_window:]
+
+        if self.k.shape[0] > self.capacity:
+            n = self.k.shape[0]
+            # Compute persistence score: how often a token was in top-50% of importance
+            if self.importance_history:
+                # Pad histories to current length (new tokens get zero history)
+                padded = []
+                for h in self.importance_history:
+                    if len(h) < n:
+                        padded.append(np.concatenate([h, np.zeros(n - len(h), dtype=np.float32)]))
+                    else:
+                        padded.append(h[:n])
+                history_matrix = np.stack(padded, axis=0)  # (window, n)
+                
+                # Persistence = fraction of steps where token was above median importance
+                medians = np.median(history_matrix, axis=-1, keepdims=True)  # (window, 1)
+                is_important = (history_matrix >= medians).astype(np.float32)  # (window, n)
+                persistence = is_important.mean(axis=0)  # (n,)
+            else:
+                persistence = np.ones(n, dtype=np.float32)
+
+            # Keep persistent tokens + recent
+            prefix_end = max(0, n - self.recent_budget)
+            prefix_budget = self.capacity - min(self.recent_budget, n)
+            
+            if prefix_end > 0 and prefix_budget > 0:
+                prefix_persistence = persistence[:prefix_end]
+                keep_count = min(prefix_budget, len(prefix_persistence))
+                top_persistent = np.argpartition(prefix_persistence, -keep_count)[-keep_count:]
+                top_persistent = np.sort(top_persistent)
+                keep_indices = np.concatenate([top_persistent, np.arange(prefix_end, n)])
+            else:
+                keep_indices = np.arange(max(0, n - self.capacity), n)
+            
+            keep_indices = np.unique(keep_indices).astype(int)
+            if len(keep_indices) > self.capacity:
+                keep_indices = keep_indices[-self.capacity:]
+            
+            # Reindex importance history
+            old_to_new = {old: new for new, old in enumerate(keep_indices)}
+            self.importance_history = []  # Reset history after eviction (conservative)
+            
+            self.k = self.k[keep_indices]
+            self.v = self.v[keep_indices]
+            self.positions = self.positions[keep_indices]
+            self.tags = [self.tags[i] for i in keep_indices]
+
+
+class DeepSeekCordisBaseline(BaselineCache):
+    """DeepSeek Cordis Harness Baseline (Shi et al., 2026, arXiv:2608.25512).
+    Microkernel agent harness with software-level spatiotemporal composability:
+    - dsh-compaction-basic & tool-result-pruner: software compaction truncates
+      large tool results (>1024 tok) to head + tail window (512 + 512 tok).
+    - Lacks physical 3-tier breathing memory geometry and hardware-level
+      provenance quarantine: near-miss decoys entering through tool calls
+      are retained in KV cache with unsuppressed attention rights."""
+    def __init__(self, capacity: int = 8192, tool_head_tail: int = 512):
+        super().__init__(f"DeepSeek Cordis ({capacity//1024}K)")
+        self.capacity = capacity
+        self.tool_head_tail = tool_head_tail
+
+    def add_step(self, k: np.ndarray, v: np.ndarray, start_pos: int, source_tag: str, step_num: int = None):
+        num_tokens = k.shape[0]
+        is_tool = ("tool" in source_tag) or ("decoy" in source_tag) or ("stderr" in source_tag)
+
+        # Software-level tool result compaction (dsh tool-result-pruner)
+        if is_tool and num_tokens > (2 * self.tool_head_tail):
+            head_k, head_v = k[:self.tool_head_tail], v[:self.tool_head_tail]
+            tail_k, tail_v = k[-self.tool_head_tail:], v[-self.tool_head_tail:]
+            k_eff = np.concatenate([head_k, tail_k], axis=0).astype(np.float32)
+            v_eff = np.concatenate([head_v, tail_v], axis=0).astype(np.float32)
+            pos_eff = np.concatenate([
+                np.arange(start_pos, start_pos + self.tool_head_tail, dtype=np.int32),
+                np.arange(start_pos + num_tokens - self.tool_head_tail, start_pos + num_tokens, dtype=np.int32)
+            ])
+            n_eff = 2 * self.tool_head_tail
+        else:
+            k_eff = k.astype(np.float32)
+            v_eff = v.astype(np.float32)
+            pos_eff = np.arange(start_pos, start_pos + num_tokens, dtype=np.int32)
+            n_eff = num_tokens
+
+        if self.k is None:
+            self.k = k_eff
+            self.v = v_eff
+            self.positions = pos_eff
+        else:
+            self.k = np.concatenate([self.k, k_eff], axis=0)
+            self.v = np.concatenate([self.v, v_eff], axis=0)
+            self.positions = np.concatenate([self.positions, pos_eff], axis=0)
+        self.tags.extend([source_tag] * n_eff)
+
+        # Rolling eviction if exceeding capacity
+        if self.k.shape[0] > self.capacity:
+            excess = self.k.shape[0] - self.capacity
+            self.k = self.k[excess:]
+            self.v = self.v[excess:]
+            self.positions = self.positions[excess:]
+            self.tags = self.tags[excess:]
 
 
 # ==============================================================================

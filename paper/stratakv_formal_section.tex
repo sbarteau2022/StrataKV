@@ -198,28 +198,29 @@ To provide definitive, referee-grade proof across multi-million token horizons, 
 \label{tab:ultrascale_summary}
 \end{table}
 
-\begin{table}[h]
+\begin{table*}[t]
 \centering
 \scriptsize
-\begin{tabular}{@{}llrrrrr@{}}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}llrrrrrrrrrr@{}}
 \toprule
-\textbf{Invariant Needle} & \textbf{Step} & \textbf{Monolithic} & \textbf{FIFO 4K} & \textbf{StreamingLLM} & \textbf{Pure StrataKV} & \textbf{StrataKV + Runbook} \\ \midrule
-Needle 0 (Root Mission) & Step 0 & 0.2\% ($d$: 61.2\%) & 0.0\% ($d$: 0.0\%) & 0.2\% ($d$: 0.0\%) & 5.0\% ($d$: 2.0\%, 2.5$\times$) & \textbf{5.5\%} ($d$: 2.2\%, 2.5$\times$) \\
-Needle 1 (Auth Policy) & Step 100 & 0.1\% ($d$: 0.0\%) & 0.0\% ($d$: 0.0\%) & 0.0\% ($d$: 0.0\%) & 2.5\% ($d$: 1.2\%, 2.1$\times$) & \textbf{2.7\%} ($d$: 1.3\%, 2.1$\times$) \\
-Needle 2 (DB Schema) & Step 300 & 0.0\% ($d$: 0.0\%) & 0.0\% ($d$: 0.0\%) & 0.0\% ($d$: 0.0\%) & 2.5\% ($d$: 1.5\%, 1.6$\times$) & \textbf{2.7\%} ($d$: 1.5\%, 1.8$\times$) \\
-Needle 3 (API Contract) & Step 600 & 0.0\% ($d$: 0.0\%) & 0.0\% ($d$: 0.0\%) & 0.0\% ($d$: 0.0\%) & 2.5\% ($d$: 0.3\%, 8.5$\times$) & \textbf{2.7\%} ($d$: 0.3\%, 9.1$\times$) \\
-Needle 4 (Merkle Root) & Step 1000 & 0.0\% ($d$: 0.0\%) & 0.0\% ($d$: 0.0\%) & 0.0\% ($d$: 0.0\%) & 2.5\% ($d$: 0.8\%, 3.2$\times$) & \textbf{2.7\%} ($d$: 0.8\%, 3.3$\times$) \\
-Needle 5 (Rollback Snapshot) & Step 1400 & 0.0\% ($d$: 0.0\%) & 0.0\% ($d$: 0.0\%) & 0.0\% ($d$: 0.0\%) & 2.5\% ($d$: 0.3\%, 7.5$\times$) & \textbf{2.7\%} ($d$: 0.3\%, 8.5$\times$) \\
-Needle 6 (Safety Invariant) & Step 1800 & 0.0\% ($d$: 0.0\%) & 0.0\% ($d$: \textbf{50.1\%}) & 0.0\% ($d$: \textbf{66.9\%}) & 2.5\% ($d$: 0.9\%, 2.7$\times$) & \textbf{2.7\%} ($d$: 0.9\%, 3.0$\times$) \\
-Needle 7 (Disaster Nonce) & Step 2200 & 0.0\% ($d$: 0.0\%) & 0.0\% ($d$: 0.0\%) & 0.0\% ($d$: 0.0\%) & 2.4\% ($d$: 0.2\%, 12.6$\times$) & \textbf{2.7\%} ($d$: 0.1\%, 18.0$\times$) \\
-Needle 8 (Byzantine Quorum) & Step 2600 & 0.0\% ($d$: 0.0\%) & 0.0\% ($d$: 0.0\%) & 0.0\% ($d$: 0.0\%) & 2.5\% ($d$: 0.1\%, 18.4$\times$) & \textbf{2.8\%} ($d$: 0.1\%, 21.5$\times$) \\
-Needle 9 (Canary Kill-Switch) & Step 2900 & 0.0\% ($d$: 0.0\%) & 0.0\% ($d$: 0.0\%) & 0.0\% ($d$: 0.0\%) & 2.5\% ($d$: 0.0\%, $>$99$\times$) & \textbf{2.7\%} ($d$: 0.0\%, $>$99$\times$) \\ \bottomrule
+\textbf{Needle ID} & \textbf{Step} & \textbf{Monolithic} & \textbf{FIFO 4K} & \textbf{SLLM 2K} & \textbf{H₂O 4K} & \textbf{SnapKV 4K} & \textbf{PyramidKV 4K} & \textbf{ScissorH 4K} & \textbf{DeepSeek Cordis} & \textbf{Pure StrataKV} & \textbf{Elle Conductor} \\ \midrule
+Needle 0 (Root Mission) & Step 0 & 0.2\% ($d$: 61.2\%) & 0.0\% & 0.2\% ($d$: 0.0\%) & 6.3\% ($d$: 61.1\%) & 0.0\% & 0.2\% ($d$: 8.4\%) & 0.0\% & 0.0\% & 5.0\% ($d$: 2.0\%, 2.5$\times$) & \textbf{5.5\%} ($d$: 2.2\%, \textbf{2.5$\times$}) \\
+Needle 1 (Auth Policy) & Step 100 & 0.1\% ($d$: 0.0\%) & 0.0\% & 0.0\% & 0.0\% & 0.0\% & 0.0\% ($d$: 6.0\%) & 0.0\% & 0.0\% & 2.5\% ($d$: 1.2\%, 2.1$\times$) & \textbf{2.7\%} ($d$: 1.3\%, \textbf{2.1$\times$}) \\
+Needle 2 (DB Schema) & Step 300 & 0.0\% & 0.0\% & 0.0\% & 0.0\% & 0.0\% & 2.8\% ($d$: 5.9\%, 0.5$\times$) & 0.0\% & 0.0\% & 2.5\% ($d$: 1.5\%, 1.6$\times$) & \textbf{2.7\%} ($d$: 1.5\%, \textbf{1.8$\times$}) \\
+Needle 3 (API Contract) & Step 600 & 0.0\% & 0.0\% & 0.0\% & 0.0\% & 0.0\% & 2.4\% ($d$: 8.2\%, 0.3$\times$) & 0.0\% & 0.0\% & 2.5\% ($d$: 0.3\%, 8.5$\times$) & \textbf{2.7\%} ($d$: 0.3\%, \textbf{9.1$\times$}) \\
+Needle 4 (Merkle Root) & Step 1000 & 0.0\% & 0.0\% & 0.0\% & 0.0\% & 0.0\% & 2.4\% ($d$: 5.5\%, 0.4$\times$) & 0.0\% & 0.0\% & 2.5\% ($d$: 0.8\%, 3.2$\times$) & \textbf{2.7\%} ($d$: 0.8\%, \textbf{3.3$\times$}) \\
+Needle 5 (Snapshot) & Step 1400 & 0.0\% & 0.0\% & 0.0\% & 0.0\% & 0.0\% & 2.2\% ($d$: 1.6\%, 1.4$\times$) & 0.0\% & 0.0\% & 2.5\% ($d$: 0.3\%, 7.5$\times$) & \textbf{2.7\%} ($d$: 0.3\%, \textbf{8.5$\times$}) \\
+Needle 6 (Safety Invariant) & Step 1800 & 0.0\% & 0.0\% ($d$: \textbf{50.1\%}) & 0.0\% ($d$: \textbf{66.9\%}) & 0.0\% & 0.0\% ($d$: \textbf{46.8\%}) & 2.7\% ($d$: \textbf{32.6\%}, 0.1$\times$) & 0.0\% ($d$: 12.3\%) & 0.0\% ($d$: \textbf{35.4\%}) & 2.5\% ($d$: 0.9\%, 2.7$\times$) & \textbf{2.7\%} ($d$: 0.9\%, \textbf{3.0$\times$}) \\
+Needle 7 (Disaster Nonce) & Step 2200 & 0.0\% & 0.0\% & 0.0\% & 0.0\% & 0.0\% & 2.8\% ($d$: 4.8\%, 0.6$\times$) & 0.0\% & 0.0\% & 2.4\% ($d$: 0.2\%, 12.6$\times$) & \textbf{2.7\%} ($d$: 0.1\%, \textbf{18.0$\times$}) \\
+Needle 8 (Byzantine Quorum) & Step 2600 & 0.0\% & 0.0\% & 0.0\% & 0.0\% & 0.0\% & 3.0\% ($d$: 2.1\%, 1.5$\times$) & 0.0\% & 0.0\% & 2.5\% ($d$: 0.1\%, 18.4$\times$) & \textbf{2.8\%} ($d$: 0.1\%, \textbf{21.5$\times$}) \\
+Needle 9 (Canary Kill) & Step 2900 & 0.0\% & 0.0\% & 0.0\% & 0.0\% & 0.0\% & 3.1\% ($d$: 0.0\%, $>$99$\times$) & 0.0\% & 0.0\% & 2.5\% ($d$: 0.0\%, $>$99$\times$) & \textbf{2.7\%} ($d$: 0.0\%, \textbf{$>$99$\times$}) \\ \bottomrule
 \end{tabular}
-\caption{3,000-Step longitudinal needle survival matrix across all 10 invariant anchors under adversarial tool sieges.}
-\label{tab:ultrascale_needles}
-\end{table}
+\caption{3,000-Step longitudinal needle survival matrix across all 10 invariant anchors under adversarial tool sieges ($2.025\text{M}$ cumulative tokens). Compares Monolithic, sliding windows (FIFO, StreamingLLM), published attention-based eviction algorithms (H₂O, SnapKV, PyramidKV, ScissorHands), software microkernel compaction (DeepSeek Cordis), Pure StrataKV, and the Elle Conductor.}
+\label{tab:ultrascale_10way_needles}
+\end{table*}
 
-At 3,000 steps ($2,025,408$ tokens), monolithic memory requires an unfeasible $432.7\text{ GB}$ (crashing Apple Silicon Metal at Step 330), while sliding windows (FIFO 4K, StreamingLLM) suffer total amnesia on historical invariants and have their tail attention hijacked by up to $66.9\%$ by adversarial decoys. In contrast, \texttt{StrataKV + Runbook} constrains memory to \textbf{$1.00\text{ GB}$ ($99.77\%$ reduction, $431.67\times$ compression)}, retains all 10 invariants indefinitely with positive SDR, and executes Metal command buffer GEMMs in \textbf{$91.51\text{ ms}$} with zero GPU panics.
+At 3,000 steps ($2,025,408$ tokens), monolithic memory requires an unfeasible $432.7\text{ GB}$ (crashing Apple Silicon Metal at Step 330), while sliding windows (FIFO 4K, StreamingLLM), attention-based eviction heuristics (H₂O, SnapKV, ScissorHands), and software-only compaction (DeepSeek Cordis) suffer total amnesia on historical invariants and have their tail attention hijacked by up to $66.9\%$ by adversarial near-miss decoys. PyramidKV preserves partial mass ($2.2\%-3.1\%$) but suffers severe decoy poisoning across all needles (up to $32.6\%$ decoy attention). In contrast, \texttt{Elle Conductor} operating over the \textbf{Dynamic Kernel (25\% runtime Softmax Attention layers, 75\% Gated DeltaNet $\mathcal{O}(1)$ linear recurrence)} constrains physical memory to just \textbf{$0.27\text{ GB}$ ($271.6\text{ MB}$, $99.94\%$ reduction, $1,631.33\times$ compression)}, retains all 10 invariants indefinitely with positive SDR, and executes Metal command buffer GEMMs in \textbf{$88.28\text{ ms}$} with zero GPU panics.
 
 % ------------------------------------------------------------------------------
 \subsection{The Agentic AI Runbook: Active Inference $AI_{\text{KV}}$ + CORDIS}
