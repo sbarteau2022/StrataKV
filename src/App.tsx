@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PACKAGES_META, ALL_TELEMETRY_STORE, REFEREE_REPORT_HTML, BenchmarkMeta } from './data/telemetryData';
 import { RadarChart } from './components/RadarChart';
 import { MemoryManifold3D } from './components/MemoryManifold3D';
 import { BenchmarkTelemetryBoard } from './components/BenchmarkTelemetryBoard';
 import { MarketingDeck } from './components/MarketingDeck';
+import { AgenticRunbook } from './components/AgenticRunbook';
 import { 
   Cpu, 
   Layers, 
@@ -22,7 +23,44 @@ import {
 } from 'lucide-react';
 
 export const App: React.FC = () => {
-  const [activeTier, setActiveTier] = useState<'tier1' | 'tier2' | 'tier3' | 'tier4' | 'tier5'>('tier1');
+  const [activeTier, setActiveTier] = useState<'tier1' | 'runbook' | 'tier2' | 'tier3' | 'tier4' | 'tier5'>(() => {
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname.toLowerCase();
+      const hash = window.location.hash.toLowerCase();
+      if (path.includes('runbook') || hash.includes('runbook')) return 'runbook';
+      if (path.includes('benchmark') || hash.includes('benchmark')) return 'tier2';
+      if (path.includes('simulator') || hash.includes('simulator')) return 'tier3';
+      if (path.includes('audit') || hash.includes('audit')) return 'tier4';
+      if (path.includes('telemetry') || hash.includes('telemetry')) return 'tier5';
+    }
+    return 'tier1';
+  });
+
+  useEffect(() => {
+    const syncRoute = () => {
+      const path = window.location.pathname.toLowerCase();
+      const hash = window.location.hash.toLowerCase();
+      if (path.includes('runbook') || hash.includes('runbook')) {
+        setActiveTier('runbook');
+      } else if (path.includes('benchmark') || hash.includes('benchmark')) {
+        setActiveTier('tier2');
+      } else if (path.includes('simulator') || hash.includes('simulator')) {
+        setActiveTier('tier3');
+      } else if (path.includes('audit') || hash.includes('audit')) {
+        setActiveTier('tier4');
+      } else if (path.includes('telemetry') || hash.includes('telemetry')) {
+        setActiveTier('tier5');
+      } else if (path === '/' && !hash) {
+        setActiveTier('tier1');
+      }
+    };
+    window.addEventListener('popstate', syncRoute);
+    window.addEventListener('hashchange', syncRoute);
+    return () => {
+      window.removeEventListener('popstate', syncRoute);
+      window.removeEventListener('hashchange', syncRoute);
+    };
+  }, []);
   const [selectedPkgId, setSelectedPkgId] = useState<string>('01_ruler');
   const [tableSearch, setTableSearch] = useState<string>('');
   
@@ -75,12 +113,26 @@ export const App: React.FC = () => {
           {/* NAV LINKS */}
           <nav className="flex items-center relative">
             <button 
-              onClick={() => setActiveTier('tier1')} 
+              onClick={() => {
+                setActiveTier('tier1');
+                window.history.pushState(null, '', '/');
+              }} 
               className={`relative px-4 py-2 text-xs sm:text-sm font-medium rounded-full transition-all duration-300 ${
                 activeTier === 'tier1' ? 'text-[var(--color-ink)] bg-[var(--color-ivory)] shadow-sm' : 'text-[var(--color-muted)] hover:text-[var(--color-ivory)]'
               }`}
             >
               Overview
+            </button>
+            <button 
+              onClick={() => {
+                setActiveTier('runbook');
+                window.history.pushState(null, '', '/runbook');
+              }} 
+              className={`relative px-4 py-2 text-xs sm:text-sm font-medium rounded-full transition-all duration-300 ${
+                activeTier === 'runbook' ? 'text-[var(--color-ink)] bg-[var(--color-ivory)] shadow-sm' : 'text-[var(--color-muted)] hover:text-[var(--color-ivory)]'
+              }`}
+            >
+              Runbook
             </button>
             <button 
               onClick={() => setActiveTier('tier2')} 
@@ -126,6 +178,15 @@ export const App: React.FC = () => {
         {/* ======================================================================= */}
         {activeTier === "tier1" && (
           <MarketingDeck />
+        )}
+
+        {/* ======================================================================= */}
+        {/* RUNBOOK DEDICATED VIEW */}
+        {/* ======================================================================= */}
+        {activeTier === "runbook" && (
+          <div className="space-y-8 animate-fadeIn">
+            <AgenticRunbook />
+          </div>
         )}
 
         {/* ======================================================================= */}

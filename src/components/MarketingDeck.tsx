@@ -474,7 +474,7 @@ export const MarketingDeck: React.FC = () => {
       <CognitiveMultiplexingSection />
 
       {/* SLIDE 3.5: THE AGENTIC RUNBOOK (TERMINAL UI) */}
-      <section className="border-t border-[rgba(255,255,255,0.05)] pt-12 mt-12 bg-[rgba(16,18,15,0.3)]">
+      <section id="agentic-runbook" className="border-t border-[rgba(255,255,255,0.05)] pt-12 mt-12 bg-[rgba(16,18,15,0.3)]">
         <AgenticRunbook />
       </section>
 
