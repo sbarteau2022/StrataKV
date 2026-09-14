@@ -123,7 +123,7 @@ export const AgenticRunbook: React.FC = () => {
               <div 
                 key={i} 
                 className="opacity-0 animate-fade-in-up"
-                style={{ animationDelay: \`\${i * 0.4}s\`, animationFillMode: 'forwards' }}
+                style={{ animationDelay: `${i * 0.4}s`, animationFillMode: 'forwards' }}
               >
                 <span className={
                   log.includes('[SYSTEM]') ? 'text-[var(--color-silver)]' :

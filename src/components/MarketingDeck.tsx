@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowRight, Download, Brain, Activity, Cpu, Layers, Zap, CircleDot, BarChart3, Target, Orbit, Atom } from 'lucide-react';
 import { MemoryManifold3D } from './MemoryManifold3D';
+import { AgenticRunbook } from './AgenticRunbook';
 
 export const MarketingDeck: React.FC = () => {
   return (
