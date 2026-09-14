@@ -64,25 +64,37 @@ export const MemoryManifold3D: React.FC = () => {
 
     scene.add(tier1Group);
 
-    // 4. Tier 2: Harmonic Superposition Basin (Wireframe Icosahedron / Lattice)
+    // 4. Tier 2: Harmonic Superposition Basin (Torus with 12 spheres)
     const tier2Group = new THREE.Group();
-    const latticeGeo = new THREE.IcosahedronGeometry(6.2, 1);
-    const latticeMat = new THREE.MeshBasicMaterial({
+    
+    // The main Torus for Tier 2
+    const tier2TorusGeo = new THREE.TorusGeometry(6.2, 0.08, 16, 100);
+    const tier2TorusMat = new THREE.MeshBasicMaterial({
       color: 0xB8CDB1,
-      wireframe: true,
       transparent: true,
       opacity: 0.45,
     });
-    const latticeMesh = new THREE.Mesh(latticeGeo, latticeMat);
-    tier2Group.add(latticeMesh);
+    const tier2TorusMesh = new THREE.Mesh(tier2TorusGeo, tier2TorusMat);
+    tier2TorusMesh.rotation.x = Math.PI / 2; // Lay flat
+    tier2Group.add(tier2TorusMesh);
 
-    // Harmonic nodes on vertices
-    const nodeGeo = new THREE.SphereGeometry(0.22, 16, 16);
-    const nodeMat = new THREE.MeshStandardMaterial({ color: 0xF0EADD, emissive: 0xDDC28C, roughness: 0.1 });
-    const pos = latticeGeo.attributes.position;
-    for (let i = 0; i < pos.count; i += 3) {
+    // 12 Spheres snapped to the Torus
+    const nodeGeo = new THREE.SphereGeometry(0.4, 16, 16);
+    const nodeMat = new THREE.MeshStandardMaterial({ 
+      color: 0xF0EADD, 
+      emissive: 0xDDC28C, 
+      emissiveIntensity: 0.5,
+      roughness: 0.1 
+    });
+    
+    for (let i = 0; i < 12; i++) {
+      const angle = (i / 12) * Math.PI * 2;
+      const radius = 6.2;
+      const x = Math.cos(angle) * radius;
+      const z = Math.sin(angle) * radius;
+      
       const node = new THREE.Mesh(nodeGeo, nodeMat);
-      node.position.set(pos.getX(i), pos.getY(i), pos.getZ(i));
+      node.position.set(x, 0, z); // Snapped onto the flat Torus
       tier2Group.add(node);
     }
 
