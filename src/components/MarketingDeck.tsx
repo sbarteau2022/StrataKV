@@ -147,6 +147,12 @@ export const MarketingDeck: React.FC = () => {
         </div>
       </section>
 
+      
+      {/* SLIDE 3.5: THE AGENTIC RUNBOOK (TERMINAL UI) */}
+      <section className="border-t border-[rgba(255,255,255,0.05)] pt-12 mt-12 bg-[rgba(16,18,15,0.3)]">
+        <AgenticRunbook />
+      </section>
+
       {/* SLIDE 4: THE PAPER */}
       <section className="max-w-5xl mx-auto px-6 pt-16">
         <div className="glass-card p-10 lg:p-16 border-[rgba(221,194,140,0.3)] shadow-2xl relative overflow-hidden">
