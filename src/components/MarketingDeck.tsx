@@ -28,10 +28,20 @@ export const MarketingDeck: React.FC = () => {
             Coherent Memory Geometry, Thermodynamic Exhalation, and Dynamic Kernel Orchestration for Resident Multi-Agent Tool Swarms.
           </p>
           <div className="pt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button className="px-8 py-3.5 bg-[var(--color-ivory)] text-[var(--color-ink)] font-semibold rounded-full hover:bg-white transition-colors flex items-center gap-2">
+            <button 
+              onClick={() => {
+                document.getElementById('engineering-breakdown')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="cursor-pointer px-8 py-3.5 bg-[var(--color-ivory)] text-[var(--color-ink)] font-semibold rounded-full hover:bg-white hover:scale-105 active:scale-95 transition-all duration-200 flex items-center gap-2 shadow-lg"
+            >
               Explore the Engineering <ArrowRight className="w-4 h-4" />
             </button>
-            <button className="px-8 py-3.5 bg-[rgba(37,39,32,0.6)] border border-[rgba(121,121,107,0.4)] text-[var(--color-ivory)] font-semibold rounded-full hover:bg-[rgba(37,39,32,0.9)] transition-colors flex items-center gap-2">
+            <button 
+              onClick={() => {
+                document.getElementById('paper-section')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="cursor-pointer px-8 py-3.5 bg-[rgba(37,39,32,0.6)] border border-[rgba(121,121,107,0.4)] text-[var(--color-ivory)] font-semibold rounded-full hover:bg-[rgba(37,39,32,0.9)] hover:scale-105 active:scale-95 transition-all duration-200 flex items-center gap-2 shadow-lg"
+            >
               <Download className="w-4 h-4" /> Read the Paper
             </button>
           </div>
@@ -111,7 +121,7 @@ export const MarketingDeck: React.FC = () => {
       </section>
 
       {/* SLIDE 3: ENGINEERING BREAKDOWN */}
-      <section className="max-w-7xl mx-auto px-6 space-y-16">
+      <section id="engineering-breakdown" className="max-w-7xl mx-auto px-6 space-y-16">
         <div className="text-center space-y-4 max-w-3xl mx-auto">
           <h2 className="font-serif text-4xl lg:text-5xl text-[var(--color-ivory)]">
             Engineering Breakdown
@@ -465,7 +475,7 @@ export const MarketingDeck: React.FC = () => {
       </section>
 
       {/* SLIDE 4: THE PAPER */}
-      <section className="max-w-5xl mx-auto px-6 pt-16">
+      <section id="paper-section" className="max-w-5xl mx-auto px-6 pt-16">
         <div className="glass-card p-10 lg:p-16 border-[rgba(221,194,140,0.3)] shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--color-gold)] opacity-5 blur-[100px] rounded-full pointer-events-none"></div>
           
