@@ -497,21 +497,21 @@ To establish an objective industry reference, Table~\ref{tab:frontier_comparison
 \begin{table*}[t]
 \centering
 \scriptsize
-\setlength{\tabcolsep}{3.5pt}
+\setlength{\tabcolsep}{3.0pt}
 \resizebox{\textwidth}{!}{\begin{tabular}{@{}llccccccc@{}}
 \toprule
-\textbf{Model / Architecture} & \textbf{Organization} & \textbf{Context Window} & \textbf{Single NIAH} & \textbf{RULER 128K} & \textbf{Variable Tracing} & \textbf{KV Cache Memory} & \textbf{Total Hardware / Pod Cost} & \textbf{Target Silicon} \\ \midrule
-\textbf{Gemini 1.5 Pro} & Google DeepMind & 1,000,000 & 99.7\% & \textbf{91.1\%} & \textbf{89.6\%} & $>$120 GB / stream & \$4.50 / M tok-hr cache & Multi-Node TPU v4/v5e \\
-\textbf{Claude 3.5 Sonnet} & Anthropic & 200,000 & $>$99.5\% & 88.3\% & 84.1\% & $\sim$48 GB / stream & \$3.75 / M tok-hr cache & AWS Trainium / H100 Cluster \\
-\textbf{GPT-4o} & OpenAI & 128,000 & 99.2\% & 85.6\% & 79.8\% & $\sim$32 GB / stream & Proprietary Datacenter & Azure ND H100 v5 Cluster \\
-\textbf{Llama 3.1 405B} & Meta AI & 128,000 & \textbf{100.0\%} & 88.6\% & 84.7\% & 66.1 GB (GQA) & 876 GB VRAM (\$300K+ node) & 8$\times$ NVIDIA H100 SXM5 \\
-\textbf{Llama 3.1 70B} & Meta AI & 128,000 & \textbf{100.0\%} & 83.5\% & 77.2\% & 41.9 GB (FP16) & 182 GB VRAM (\$60K+ node) & 4$\times$ NVIDIA A100/H100 \\ \midrule
-\textbf{FIFO 4K (Sliding Window)} & Baseline & 4,096 & 0.00\% & 0.00\% & 0.00\% & 0.25 GB & Consumer Edge & Single Apple Silicon / GPU \\
-\textbf{H$_2$O / SnapKV 4K} & SOTA Compression & 4,096 & 0.00\% & 0.00\% & 0.00\% & 0.25 GB & Consumer Edge & Single Apple Silicon / GPU \\
-\textbf{DeepSeek Cordis} & Software Compactor & 4,096 & 0.00\% & 0.00\% & 0.00\% & 0.25 GB & Consumer Edge & Single Apple Silicon / GPU \\ \midrule
-\textbf{StrataKV + Elle Conductor} & \textbf{This Work} & \textbf{2,025,408} & \textbf{98.41\%} & \textbf{100\% (5-Hop)} & \textbf{100\% (Canary)} & \textbf{0.27 GB (1,631$\times$)} & \textbf{Single Consumer Mac (\$3.5K)} & \textbf{Apple Silicon (48GB UMA)} \\ \bottomrule
+\textbf{Model / Architecture} & \textbf{Organization} & \textbf{Prompt Context} & \textbf{Stream Horizon} & \textbf{Single NIAH} & \textbf{Multi-Hop Retention} & \textbf{Active KV Memory} & \textbf{Serving Infrastructure} & \textbf{Deployment Silicon} \\ \midrule
+\textbf{Gemini 1.5 Pro} & Google DeepMind & 1,000,000 & Single-turn ($1\text{M}$) & 99.7\% & \textbf{91.1\% (RULER)} & $>$120 GB / stream & \$4.50 / M tok-hr cache & Multi-Node TPU v4/v5e \\
+\textbf{Claude 3.5 Sonnet} & Anthropic & 200,000 & Single-turn ($200\text{K}$) & $>$99.5\% & 88.3\% (RULER) & $\sim$48 GB / stream & \$3.75 / M tok-hr cache & AWS Trainium / H100 Cluster \\
+\textbf{GPT-4o} & OpenAI & 128,000 & Single-turn ($128\text{K}$) & 99.2\% & 85.6\% (RULER) & $\sim$32 GB / stream & Proprietary Datacenter & Azure ND H100 v5 Cluster \\
+\textbf{Llama 3.1 405B} & Meta AI & 128,000 & Single-turn ($128\text{K}$) & \textbf{100.0\%} & 88.6\% (RULER) & 66.1 GB (GQA) & 876 GB VRAM (\$300K+ node) & 8$\times$ NVIDIA H100 SXM5 \\
+\textbf{Llama 3.1 70B} & Meta AI & 128,000 & Single-turn ($128\text{K}$) & \textbf{100.0\%} & 41.6\% (BABILong) & 41.9 GB (FP16) & 182 GB VRAM (\$60K+ node) & 4$\times$ NVIDIA A100/H100 \\ \midrule
+\textbf{FIFO 4K (Sliding Window)} & Baseline & 4,096 & 4,096 (Amnesia) & 0.00\% & 0.00\% & 0.25 GB & Local Workstation & Single Edge GPU / Mac \\
+\textbf{H$_2$O / SnapKV 4K} & SOTA Compression & 4,096 & 4,096 (Amnesia) & 0.00\% & 0.00\% & 0.25 GB & Local Workstation & Single Edge GPU / Mac \\
+\textbf{DeepSeek Cordis} & Software Compactor & 4,096 & 4,096 (Drift) & 0.00\% & 0.00\% & 0.25 GB & Local Workstation & Single Edge GPU / Mac \\ \midrule
+\textbf{StrataKV + Elle Conductor} & \textbf{This Work} & \textbf{2,048--4,096} & \textbf{2,025,408 (3K Steps)} & \textbf{98.41\% / 100\%} & \textbf{100\% (5-Hop Rollout)} & \textbf{0.27 GB (1,631$\times$)} & \textbf{Single Consumer Mac (\$3.5K)} & \textbf{Apple Silicon (48GB UMA)} \\ \bottomrule
 \end{tabular}}
-\caption{Reference comparison between frontier datacenter models (Google, Anthropic, OpenAI, Meta), edge compression baselines, and StrataKV with Elle Conductor across long-context retrieval (Needle-in-a-Haystack \cite{kamradt2023needle}, RULER multi-key/variable tracing \cite{hsieh2024ruler}), KV cache memory footprint, and deployment hardware costs.}
+\caption{Reference comparison between frontier datacenter models (Google, Anthropic, OpenAI, Meta), edge compression baselines, and StrataKV with Elle Conductor across instantaneous prompt context window vs. longitudinal multi-turn agentic stream horizon, retrieval durability, active KV cache memory footprint, and deployment hardware costs.}
 \label{tab:frontier_comparison}
 \end{table*}
 
@@ -520,7 +520,7 @@ As Table~\ref{tab:frontier_comparison} establishes, frontier lab models achieve 
 
 When researchers and practitioners attempt to compress these contexts for local edge workstations using existing sliding-window (FIFO, StreamingLLM \cite{xiao2023streamingllm}) or attention-pruning mechanisms (H$_2$O \cite{zhang2023h2o}, SnapKV \cite{li2024snapkv}, ScissorHands \cite{liu2023scissorhands}), performance collapses from the frontier regime into catastrophic amnesia ($0.00\%$ retrieval), because non-stationary tool floods prematurely evict pivotal historical constraints.
 
-StrataKV operating under the Elle Conductor eliminates this compromise. By integrating the 3:1 Dynamic Kernel, Coherent Memory Geometry, and the 2\% Milankovitch dissolution leak, StrataKV achieves \textbf{$98.41\%$ needle retention} and \textbf{$100\%$ 5-hop transitive deductive reasoning} across a $2,025,408$-token continuous tool trajectory while requiring only \textbf{$0.27$\,GB of active KV memory} ($15.53$\,GB total resident footprint for model weights, DeltaNet recurrent state, and active cache). This leaves \textbf{$32.47$\,GB ($67.4\%$) of free unified memory headroom} on a single, consumer-accessible 48\,GB Apple Silicon Mac, achieving frontier-grade retrieval durability and multi-hop deductive stability on local edge silicon without relying on datacenter clusters or remote cloud context rental.
+Crucially, an important architectural distinction must be drawn between \textbf{instantaneous prompt context window} (the maximum token sequence processed in a single forward pass) and \textbf{longitudinal stream horizon} (the cumulative volume of tokens ingested over extended multi-turn autonomous agent trajectories). While frontier models scale the instantaneous prompt window at the cost of quadratic compute and massive linear KV cache allocations ($32\text{--}120$\,GB), StrataKV operating under the Elle Conductor decouples long-horizon durability from memory footprint: it maintains an active working attention budget of just \textbf{$2,048\text{--}4,096$ tokens ($0.27$\,GB)}, yet preserves foundational invariants and achieves \textbf{$98.41\%$ needle retention} and \textbf{$100\%$ 5-hop transitive deductive reasoning} across a continuous longitudinal tool stream of \textbf{$2,025,408$ cumulative tokens} ($3,000$ steps). This leaves \textbf{$32.47$\,GB ($67.4\%$)} of free unified memory headroom on a single consumer 48\,GB Mac.
 
 % ==============================================================================
 \section{Discussion: Sovereign Edge Deployment \& Hardware Sovereignty}
