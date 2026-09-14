@@ -77,7 +77,7 @@ export const AgenticRunbook: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto px-6 pt-12 pb-24">
       <div className="text-center space-y-4 mb-16">
-        <h1 className="font-serif text-4xl md:text-5xl text-[var(--color-ivory)]">Agentic Runbook</h1>
+        <h2 className="font-serif text-4xl md:text-5xl text-[var(--color-ivory)]">Agentic Runbook</h2>
         <p className="text-[var(--color-muted)] text-lg max-w-2xl mx-auto">
           The operational lifecycle of a Sovereign Agent Swarm running on the StrataKV Architecture.
         </p>

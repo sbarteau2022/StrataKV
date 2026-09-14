@@ -1,0 +1,17 @@
+# StrataKV: Sovereign Edge Evaluation Suite
+
+> Coherent Memory Geometry, Thermodynamic Exhalation, and Dynamic Kernel Orchestration for Resident Multi-Agent Tool Swarms.
+
+StrataKV is a 3-tier sovereign edge memory engine designed to eliminate the quadratic computational scaling of self-attention and the linear memory growth of Transformer KV caches on consumer hardware (such as Apple Silicon).
+
+## Core Architecture
+- **3-Tier Memory Geometry**: Separates long-term system directives (Tier 1 Invariant Core) from active working context (Tier 2 Harmonic Basin) and scratchpad tool output (Tier 3 Transient Fringe).
+- **Dynamic Kernel Orchestration**: Routes 25% of tokens requiring multi-hop transitive reasoning through quadratic Softmax, delegating 75% of syntactic tokens to linear Gated DeltaNet.
+- **Cognitive Multiplexing**: Carves N sovereign agents from a single shared 14.37 GB weight matrix via Attention Head Partitioning and Toroidal Namespace Offsets ($W + N \times C_{\text{budget}}$).
+- **Thermodynamic Exhalation**: Continually cleans low-coherence tokens into orthogonal null-space, maintaining bounded resident memory.
+
+## Key Links & Resources
+- [Interactive Suite & Overview](https://stratakv-suite.sbarteau2022.workers.dev/)
+- [Agentic Runbook](https://stratakv-suite.sbarteau2022.workers.dev/runbook)
+- [Empirical Benchmarks](https://stratakv-suite.sbarteau2022.workers.dev/#benchmarks)
+- [Official Whitepaper Abstract](https://stratakv-suite.sbarteau2022.workers.dev/#paper-section)

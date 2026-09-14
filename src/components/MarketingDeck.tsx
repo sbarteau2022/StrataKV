@@ -495,7 +495,7 @@ export const MarketingDeck: React.FC = () => {
             
             <div className="prose prose-invert prose-sm max-w-none text-[var(--color-muted)] space-y-4">
               <p className="leading-relaxed">
-                Autonomous multi-agent systems operating over long horizons exhibit a dual failure mode: the quadratic memory wall of standard Key-Value caches, and catastrophic attention hijacking induced by verbose, non-stationary tool feedback. On consumer Unified Memory Architectures (UMA) such as Apple Silicon (48 GB), monolithic transformers trigger fatal GPU command buffer out-of-memory panics within hundreds of turns.
+                Autonomous multi-agent systems operating over long horizons exhibit a dual failure mode: the quadratic computational scaling of self-attention combined with the linear memory exhaustion of uncompressed Key-Value caches, and catastrophic attention hijacking induced by verbose, non-stationary tool feedback. On consumer Unified Memory Architectures (UMA) such as Apple Silicon (48 GB), monolithic transformers trigger fatal GPU command buffer out-of-memory panics within hundreds of turns.
               </p>
               <p className="leading-relaxed">
                 We resolve this dilemma by introducing StrataKV (The Breathing Cache) orchestrated by the Elle Conductor. StrataKV establishes a three-tier Coherent Memory Geometry regulated by intake coherence curvature, the neurobiological Rajasethupathy Tri-Timer Law, thermodynamic exhalation, and a continuous 2% dissolution leak that acts as slow-wave computational sleep.
