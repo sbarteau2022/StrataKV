@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowRight, Download, Brain, Activity, Cpu, Layers, Zap, CircleDot, BarChart3, Target, Orbit, Atom } from 'lucide-react';
 import { MemoryManifold3D } from './MemoryManifold3D';
 import { AgenticRunbook } from './AgenticRunbook';
+import { CognitiveMultiplexingSection } from './CognitiveMultiplexingSection';
 
 export const MarketingDeck: React.FC = () => {
   return (
@@ -468,6 +469,9 @@ export const MarketingDeck: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* SLIDE 3D: COGNITIVE MULTIPLEXING & SWARM SCALING LAW */}
+      <CognitiveMultiplexingSection />
 
       {/* SLIDE 3.5: THE AGENTIC RUNBOOK (TERMINAL UI) */}
       <section className="border-t border-[rgba(255,255,255,0.05)] pt-12 mt-12 bg-[rgba(16,18,15,0.3)]">
