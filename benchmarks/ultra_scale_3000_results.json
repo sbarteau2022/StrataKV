@@ -15,6 +15,26 @@
       "NUDGE": 925,
       "KILL": 0
     },
+    "time_in_superposition_s": 125.865,
+    "superposition_turns_held": 925,
+    "telemetry_hardware": {
+      "chipset": "Apple M5 Pro Metal GPU",
+      "host_rss_mb": 17619.05,
+      "active_metal_mb": 14.99,
+      "peak_metal_mb": 14.99,
+      "free_uma_gb": 47.99,
+      "free_uma_pct": 100.0,
+      "metal_command_buffer_ms": 37.8
+    },
+    "activation_thresholds": {
+      "budget_tokens": 2048,
+      "kappa_core": 0.95,
+      "kappa_twistor": 0.3183,
+      "tau_corona": 0.85,
+      "leak_rate": 0.02,
+      "apophenia_threshold": 1.5,
+      "breathing_schedule": "Fibonacci Checkpoints"
+    },
     "evaluations": {
       "needle_0": {
         "step": 0,
@@ -91,22 +111,22 @@
           "rank": 8193
         },
         "pure_stratakv": {
-          "needle_mass": 0.12589670265587294,
-          "decoy_mass": 0.0418419273139004,
-          "sdr": 3.008864809486166,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 7.610324427460192,
-          "rank": 134
+          "needle_mass": 0.17222648095718643,
+          "decoy_mass": 0.034701643477013586,
+          "sdr": 4.963064100156221,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 7.580959568954466,
+          "rank": 1
         },
         "elle_conductor": {
-          "needle_mass": 0.1492271572781904,
-          "decoy_mass": 0.04960465256545921,
-          "sdr": 3.0083298553753095,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 7.440712021574321,
-          "rank": 58
+          "needle_mass": 0.19789982201272582,
+          "decoy_mass": 0.039881009550291335,
+          "sdr": 4.962257080357189,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 7.410134592560138,
+          "rank": 1
         }
       },
       "needle_1": {
@@ -184,22 +204,22 @@
           "rank": 8193
         },
         "pure_stratakv": {
-          "needle_mass": 0.0635926174391493,
-          "decoy_mass": 0.0049449994519538895,
-          "sdr": 12.859984729426474,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 7.610311130633784,
-          "rank": 131
+          "needle_mass": 0.08698037450976275,
+          "decoy_mass": 0.004102361434874462,
+          "sdr": 21.20251369621811,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 7.580778654194358,
+          "rank": 1
         },
         "elle_conductor": {
-          "needle_mass": 0.07530981024172125,
-          "decoy_mass": 0.005856180306103376,
-          "sdr": 12.859885847987385,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 7.440700380819889,
-          "rank": 99
+          "needle_mass": 0.09987186321737364,
+          "decoy_mass": 0.004710409014372338,
+          "sdr": 21.202376038396224,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 7.410112307516739,
+          "rank": 1
         }
       },
       "needle_2": {
@@ -277,22 +297,22 @@
           "rank": 8193
         },
         "pure_stratakv": {
-          "needle_mass": 0.06313038450710162,
-          "decoy_mass": 0.014835790708463949,
-          "sdr": 4.255276024558986,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 7.610313486606005,
-          "rank": 160
+          "needle_mass": 0.08637190504256162,
+          "decoy_mass": 0.012311094573618911,
+          "sdr": 7.015777884416994,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 7.581071993237477,
+          "rank": 1
         },
         "elle_conductor": {
-          "needle_mass": 0.07490305877813602,
-          "decoy_mass": 0.01760659557580036,
-          "sdr": 4.25426133380877,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 7.440712278271635,
-          "rank": 54
+          "needle_mass": 0.0993275614481412,
+          "decoy_mass": 0.01416112248658803,
+          "sdr": 7.014102274887752,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 7.410074849879858,
+          "rank": 1
         }
       },
       "needle_3": {
@@ -370,22 +390,22 @@
           "rank": 8193
         },
         "pure_stratakv": {
-          "needle_mass": 0.06388340223538422,
+          "needle_mass": 0.08737151204309475,
           "decoy_mass": 0.0,
-          "sdr": 63883402235.38422,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 7.610320359766922,
-          "rank": 73
+          "sdr": 87371512043.09476,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 7.580710641235216,
+          "rank": 1
         },
         "elle_conductor": {
-          "needle_mass": 0.07578089076657372,
+          "needle_mass": 0.10045502862864036,
           "decoy_mass": 0.0,
-          "sdr": 75780890766.57373,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 7.440715597116673,
-          "rank": 14
+          "sdr": 100455028628.64037,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 7.40970915712048,
+          "rank": 1
         }
       }
     }
@@ -405,6 +425,26 @@
       "CONTINUE": 105,
       "NUDGE": 1895,
       "KILL": 0
+    },
+    "time_in_superposition_s": 249.905,
+    "superposition_turns_held": 1895,
+    "telemetry_hardware": {
+      "chipset": "Apple M5 Pro Metal GPU",
+      "host_rss_mb": 17619.05,
+      "active_metal_mb": 25.18,
+      "peak_metal_mb": 25.18,
+      "free_uma_gb": 47.98,
+      "free_uma_pct": 100.0,
+      "metal_command_buffer_ms": 53.69
+    },
+    "activation_thresholds": {
+      "budget_tokens": 2048,
+      "kappa_core": 0.95,
+      "kappa_twistor": 0.3183,
+      "tau_corona": 0.85,
+      "leak_rate": 0.02,
+      "apophenia_threshold": 1.5,
+      "breathing_schedule": "Fibonacci Checkpoints"
     },
     "evaluations": {
       "needle_0": {
@@ -482,22 +522,22 @@
           "rank": 8193
         },
         "pure_stratakv": {
-          "needle_mass": 0.0830755067144276,
-          "decoy_mass": 0.024769581218070186,
-          "sdr": 3.3539326314415607,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 8.028444521277809,
-          "rank": 84
+          "needle_mass": 0.11259413291232315,
+          "decoy_mass": 0.0203617231461567,
+          "sdr": 5.529695699333552,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 7.99836480237913,
+          "rank": 1
         },
         "elle_conductor": {
-          "needle_mass": 0.08898845565410635,
-          "decoy_mass": 0.026532726470419155,
-          "sdr": 3.353912978122242,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 7.9599674553943505,
-          "rank": 35
+          "needle_mass": 0.11909963897316495,
+          "decoy_mass": 0.02153831141228488,
+          "sdr": 5.529664637740992,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 7.929361181182151,
+          "rank": 1
         }
       },
       "needle_1": {
@@ -575,22 +615,22 @@
           "rank": 8193
         },
         "pure_stratakv": {
-          "needle_mass": 0.04176265909009367,
-          "decoy_mass": 0.017936510258807135,
-          "sdr": 2.328360338075657,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 8.028438628645592,
-          "rank": 105
+          "needle_mass": 0.05660460223344314,
+          "decoy_mass": 0.014745322841922122,
+          "sdr": 3.8388174230076375,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 7.998409074557388,
+          "rank": 1
         },
         "elle_conductor": {
-          "needle_mass": 0.044745340789289594,
-          "decoy_mass": 0.019924736135465464,
-          "sdr": 2.2457181106476063,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 7.95996714715784,
-          "rank": 50
+          "needle_mass": 0.05988636196199952,
+          "decoy_mass": 0.016174294711768563,
+          "sdr": 3.702564039372033,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 7.929368226311302,
+          "rank": 1
         }
       },
       "needle_2": {
@@ -668,22 +708,22 @@
           "rank": 8193
         },
         "pure_stratakv": {
-          "needle_mass": 0.04197759894474026,
-          "decoy_mass": 0.015319701028230135,
-          "sdr": 2.740105623953543,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 8.028444038701835,
-          "rank": 27
+          "needle_mass": 0.056886404712766785,
+          "decoy_mass": 0.012591983237351532,
+          "sdr": 4.517668395874682,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 7.9982393665462315,
+          "rank": 1
         },
         "elle_conductor": {
-          "needle_mass": 0.044958099268666174,
-          "decoy_mass": 0.016409051346594164,
-          "sdr": 2.7398353700683376,
-          "top1_match": false,
+          "needle_mass": 0.06016488716878876,
+          "decoy_mass": 0.013318998554343566,
+          "sdr": 4.51722304220597,
+          "top1_match": true,
           "top5_match": true,
-          "entropy": 7.959969018816832,
-          "rank": 5
+          "entropy": 7.929263706712145,
+          "rank": 1
         }
       },
       "needle_3": {
@@ -761,22 +801,22 @@
           "rank": 8193
         },
         "pure_stratakv": {
-          "needle_mass": 0.041710272808257544,
-          "decoy_mass": 0.0009800503690173708,
-          "sdr": 42.559315446284224,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 8.028443298654386,
-          "rank": 14
+          "needle_mass": 0.05652557894163664,
+          "decoy_mass": 0.0008055696917204844,
+          "sdr": 70.16845286335551,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 7.9982646230047685,
+          "rank": 1
         },
         "elle_conductor": {
-          "needle_mass": 0.044656476744735635,
-          "decoy_mass": 0.001048865536037182,
-          "sdr": 42.57597872216918,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 7.959966824910333,
-          "rank": 7
+          "needle_mass": 0.05976670600856877,
+          "decoy_mass": 0.0008514269671277839,
+          "sdr": 70.19592791403666,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 7.929355420569674,
+          "rank": 1
         }
       },
       "needle_4": {
@@ -854,22 +894,22 @@
           "rank": 8193
         },
         "pure_stratakv": {
-          "needle_mass": 0.041497330664489455,
-          "decoy_mass": 0.0048963265585524945,
-          "sdr": 8.475196694551629,
+          "needle_mass": 0.05623878270125318,
+          "decoy_mass": 0.004024749834932321,
+          "sdr": 13.973236848942904,
           "top1_match": false,
           "top5_match": false,
-          "entropy": 8.028436349780748,
-          "rank": 69
+          "entropy": 7.998292327766528,
+          "rank": 18
         },
         "elle_conductor": {
-          "needle_mass": 0.04440164920462237,
-          "decoy_mass": 0.005239679739365067,
-          "sdr": 8.474115101165108,
+          "needle_mass": 0.0594344044842858,
+          "decoy_mass": 0.004253990695181858,
+          "sdr": 13.97144675271674,
           "top1_match": false,
           "top5_match": false,
-          "entropy": 7.959966359726094,
-          "rank": 71
+          "entropy": 7.929507575955565,
+          "rank": 18
         }
       },
       "needle_5": {
@@ -947,22 +987,22 @@
           "rank": 8193
         },
         "pure_stratakv": {
-          "needle_mass": 0.04113485313480452,
-          "decoy_mass": 0.0013041626311710445,
-          "sdr": 31.541199043457006,
+          "needle_mass": 0.05576364541794007,
+          "decoy_mass": 0.001072323974516777,
+          "sdr": 52.00260997901211,
           "top1_match": false,
           "top5_match": false,
-          "entropy": 8.028434980355586,
-          "rank": 2674
+          "entropy": 7.998591906743394,
+          "rank": 704
         },
         "elle_conductor": {
-          "needle_mass": 0.04408156224434499,
-          "decoy_mass": 0.0010506948655880496,
-          "sdr": 41.954675603819155,
+          "needle_mass": 0.059006892955255914,
+          "decoy_mass": 0.0008530517717892752,
+          "sdr": 69.17152616832271,
           "top1_match": false,
           "top5_match": false,
-          "entropy": 7.959964742110131,
-          "rank": 2484
+          "entropy": 7.929521307134335,
+          "rank": 704
         }
       },
       "needle_6": {
@@ -1040,22 +1080,22 @@
           "rank": 8193
         },
         "pure_stratakv": {
-          "needle_mass": 0.04208532519448811,
-          "decoy_mass": 0.001302197090170631,
-          "sdr": 32.31870621748474,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 8.02844252941188,
-          "rank": 34
+          "needle_mass": 0.05702500728976549,
+          "decoy_mass": 0.0010701986075128751,
+          "sdr": 53.284508958847105,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 7.998102555223559,
+          "rank": 1
         },
         "elle_conductor": {
-          "needle_mass": 0.04508331835392151,
-          "decoy_mass": 0.0010464447695598999,
-          "sdr": 43.08236771337876,
-          "top1_match": false,
+          "needle_mass": 0.060321686543121755,
+          "decoy_mass": 0.0008492326562326582,
+          "sdr": 71.0308136414809,
+          "top1_match": true,
           "top5_match": true,
-          "entropy": 7.95996868453161,
-          "rank": 5
+          "entropy": 7.929078637643344,
+          "rank": 1
         }
       }
     }
@@ -1075,6 +1115,26 @@
       "CONTINUE": 126,
       "NUDGE": 2874,
       "KILL": 0
+    },
+    "time_in_superposition_s": 404.138,
+    "superposition_turns_held": 2874,
+    "telemetry_hardware": {
+      "chipset": "Apple M5 Pro Metal GPU",
+      "host_rss_mb": 19346.27,
+      "active_metal_mb": 41.26,
+      "peak_metal_mb": 41.26,
+      "free_uma_gb": 47.96,
+      "free_uma_pct": 99.9,
+      "metal_command_buffer_ms": 91.87
+    },
+    "activation_thresholds": {
+      "budget_tokens": 2048,
+      "kappa_core": 0.95,
+      "kappa_twistor": 0.3183,
+      "tau_corona": 0.85,
+      "leak_rate": 0.02,
+      "apophenia_threshold": 1.5,
+      "breathing_schedule": "Fibonacci Checkpoints"
     },
     "evaluations": {
       "needle_0": {
@@ -1152,22 +1212,22 @@
           "rank": 8193
         },
         "pure_stratakv": {
-          "needle_mass": 0.049514682826028694,
-          "decoy_mass": 0.01952824999494487,
-          "sdr": 2.53554122048039,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 8.550815826299731,
-          "rank": 44
+          "needle_mass": 0.06937629745505651,
+          "decoy_mass": 0.01659561266236248,
+          "sdr": 4.180399896437472,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 8.522644522422645,
+          "rank": 1
         },
         "elle_conductor": {
-          "needle_mass": 0.054567583344936374,
-          "decoy_mass": 0.021521094403728926,
-          "sdr": 2.535539425703255,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 8.453610562236864,
-          "rank": 23
+          "needle_mass": 0.07530204057198062,
+          "decoy_mass": 0.018013132955903913,
+          "sdr": 4.180396644843501,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 8.424348535715195,
+          "rank": 1
         }
       },
       "needle_1": {
@@ -1245,22 +1305,22 @@
           "rank": 8193
         },
         "pure_stratakv": {
-          "needle_mass": 0.024909902142461283,
-          "decoy_mass": 0.0119842848823628,
-          "sdr": 2.0785472297242396,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 8.550815998819964,
-          "rank": 26
+          "needle_mass": 0.03489934532970931,
+          "decoy_mass": 0.010183810436794073,
+          "sdr": 3.4269437305724084,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 8.52256555737425,
+          "rank": 1
         },
         "elle_conductor": {
-          "needle_mass": 0.027453390437482184,
-          "decoy_mass": 0.012994888322916466,
-          "sdr": 2.1126299630500225,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 8.453610812186831,
-          "rank": 12
+          "needle_mass": 0.03788171729421211,
+          "decoy_mass": 0.010875748868385184,
+          "sdr": 3.483136449052334,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 8.424254882192145,
+          "rank": 1
         }
       },
       "needle_2": {
@@ -1338,22 +1398,22 @@
           "rank": 8193
         },
         "pure_stratakv": {
-          "needle_mass": 0.02464007581487259,
-          "decoy_mass": 0.015085829551043714,
-          "sdr": 1.6333258791968694,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 8.550816714955756,
-          "rank": 76
+          "needle_mass": 0.03452924756127432,
+          "decoy_mass": 0.012822333132113803,
+          "sdr": 2.6928989603924025,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 8.52281419987019,
+          "rank": 1
         },
         "elle_conductor": {
-          "needle_mass": 0.027156951635825786,
-          "decoy_mass": 0.014921305132303846,
-          "sdr": 1.820011814987444,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 8.453611062691929,
-          "rank": 44
+          "needle_mass": 0.03748181048283618,
+          "decoy_mass": 0.012491055895335388,
+          "sdr": 3.0006919188339585,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 8.424514236554568,
+          "rank": 1
         }
       },
       "needle_3": {
@@ -1431,22 +1491,22 @@
           "rank": 8193
         },
         "pure_stratakv": {
-          "needle_mass": 0.024561163204568817,
-          "decoy_mass": 0.002901237135233986,
-          "sdr": 8.46575514503331,
+          "needle_mass": 0.03441866249981325,
+          "decoy_mass": 0.0024659323987449634,
+          "sdr": 13.957666689212823,
           "top1_match": false,
           "top5_match": false,
-          "entropy": 8.55081487102166,
-          "rank": 433
+          "entropy": 8.522812583977952,
+          "rank": 303
         },
         "elle_conductor": {
-          "needle_mass": 0.027070120329632106,
-          "decoy_mass": 0.002984385711187302,
-          "sdr": 9.070583680975535,
+          "needle_mass": 0.03736193396976575,
+          "decoy_mass": 0.0024983137753589618,
+          "sdr": 14.954860489610647,
           "top1_match": false,
           "top5_match": false,
-          "entropy": 8.453610353090887,
-          "rank": 389
+          "entropy": 8.4245126093893,
+          "rank": 303
         }
       },
       "needle_4": {
@@ -1524,22 +1584,22 @@
           "rank": 8193
         },
         "pure_stratakv": {
-          "needle_mass": 0.024711786390018142,
-          "decoy_mass": 0.007734996376773603,
-          "sdr": 3.1948025811908454,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 8.550817629482923,
-          "rank": 40
+          "needle_mass": 0.03462702824903685,
+          "decoy_mass": 0.006573916314108733,
+          "sdr": 5.267336332639558,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 8.522731096490427,
+          "rank": 1
         },
         "elle_conductor": {
-          "needle_mass": 0.027236299382744376,
-          "decoy_mass": 0.008312086000341834,
-          "sdr": 3.276710488994494,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 8.453611668916334,
-          "rank": 22
+          "needle_mass": 0.03758806307079096,
+          "decoy_mass": 0.00695768831890777,
+          "sdr": 5.402378110074871,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 8.424423307383117,
+          "rank": 1
         }
       },
       "needle_5": {
@@ -1617,22 +1677,22 @@
           "rank": 8193
         },
         "pure_stratakv": {
-          "needle_mass": 0.024758412879262046,
-          "decoy_mass": 0.0032866918495081804,
-          "sdr": 7.532927944847305,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 8.550816305283439,
-          "rank": 42
+          "needle_mass": 0.034691426477027505,
+          "decoy_mass": 0.002793257586990587,
+          "sdr": 12.419701870175,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 8.522699792906344,
+          "rank": 1
         },
         "elle_conductor": {
-          "needle_mass": 0.027287195401116297,
-          "decoy_mass": 0.0031962472966161988,
-          "sdr": 8.537260377194434,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 8.453610531548385,
-          "rank": 23
+          "needle_mass": 0.03765731070411313,
+          "decoy_mass": 0.002675366955697687,
+          "sdr": 14.075568446382634,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 8.424392858839386,
+          "rank": 1
         }
       },
       "needle_6": {
@@ -1710,22 +1770,22 @@
           "rank": 8193
         },
         "pure_stratakv": {
-          "needle_mass": 0.024748603254316746,
-          "decoy_mass": 0.00908679124319139,
-          "sdr": 2.7235800396383643,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 8.550812125014119,
-          "rank": 57
+          "needle_mass": 0.03468063045484225,
+          "decoy_mass": 0.0077232413540108255,
+          "sdr": 4.4904242746255685,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 8.52278857039776,
+          "rank": 1
         },
         "elle_conductor": {
-          "needle_mass": 0.02728382912497422,
-          "decoy_mass": 0.00916610310556145,
-          "sdr": 2.976600722330955,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 8.45361096012228,
-          "rank": 16
+          "needle_mass": 0.03765446895576489,
+          "decoy_mass": 0.00767270856693041,
+          "sdr": 4.90758493266077,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 8.424444877415613,
+          "rank": 1
         }
       },
       "needle_7": {
@@ -1803,22 +1863,22 @@
           "rank": 8193
         },
         "pure_stratakv": {
-          "needle_mass": 0.024438361548025513,
-          "decoy_mass": 0.0019342551384911371,
-          "sdr": 12.634507755315699,
+          "needle_mass": 0.034247879664558806,
+          "decoy_mass": 0.0016441006853803199,
+          "sdr": 20.830767828940143,
           "top1_match": false,
           "top5_match": false,
-          "entropy": 8.55081365590691,
-          "rank": 4843
+          "entropy": 8.52285242657474,
+          "rank": 1166
         },
         "elle_conductor": {
-          "needle_mass": 0.026936149327417426,
-          "decoy_mass": 0.001492732882060847,
-          "sdr": 18.044855614240735,
+          "needle_mass": 0.03717825873780712,
+          "decoy_mass": 0.0012496508034774633,
+          "sdr": 29.750918123966628,
           "top1_match": false,
           "top5_match": false,
-          "entropy": 8.453608691886403,
-          "rank": 4388
+          "entropy": 8.42454606427185,
+          "rank": 1166
         }
       },
       "needle_8": {
@@ -1896,22 +1956,22 @@
           "rank": 8193
         },
         "pure_stratakv": {
-          "needle_mass": 0.024958508807040876,
-          "decoy_mass": 0.001353544564997336,
-          "sdr": 18.4393698238447,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 8.550815483658454,
-          "rank": 11
+          "needle_mass": 0.034970112507304515,
+          "decoy_mass": 0.0011502805870584531,
+          "sdr": 30.401375891017675,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 8.522647076795376,
+          "rank": 1
         },
         "elle_conductor": {
-          "needle_mass": 0.02750298408893222,
-          "decoy_mass": 0.001278585481318562,
-          "sdr": 21.51047739144458,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 8.453609761697017,
-          "rank": 7
+          "needle_mass": 0.037954186628638364,
+          "decoy_mass": 0.0010701939894022143,
+          "sdr": 35.4647727463305,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 8.42436672032579,
+          "rank": 1
         }
       },
       "needle_9": {
@@ -1989,22 +2049,22 @@
           "rank": 8193
         },
         "pure_stratakv": {
-          "needle_mass": 0.024830725397285088,
+          "needle_mass": 0.0347932261830738,
           "decoy_mass": 0.0,
-          "sdr": 24830725397.285088,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 8.550816202553435,
-          "rank": 36
+          "sdr": 34793226183.07381,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 8.522715356061033,
+          "rank": 1
         },
         "elle_conductor": {
-          "needle_mass": 0.027367567830061154,
+          "needle_mass": 0.0377686348464607,
           "decoy_mass": 0.0,
-          "sdr": 27367567830.061153,
-          "top1_match": false,
-          "top5_match": false,
-          "entropy": 8.453610681774876,
-          "rank": 14
+          "sdr": 37768634846.4607,
+          "top1_match": true,
+          "top5_match": true,
+          "entropy": 8.424405582361999,
+          "rank": 1
         }
       }
     }

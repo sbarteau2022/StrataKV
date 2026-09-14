@@ -1,0 +1,65 @@
+{
+  "Monolithic": {
+    "active_tokens": 4178,
+    "needle_mass_pct": 0.7645302433252643,
+    "corona_mass_pct": 1.1935295581154275,
+    "sdr": 0.6405624713077493,
+    "apophenia_index": 99.9,
+    "entropy": 8.337582781551156,
+    "status": "COMPROMISED (FAIL)"
+  },
+  "FIFO 4K": {
+    "active_tokens": 4096,
+    "needle_mass_pct": 0.0,
+    "corona_mass_pct": 0.0,
+    "sdr": 0.0,
+    "apophenia_index": 99.9,
+    "entropy": 8.31776138478002,
+    "status": "COMPROMISED (FAIL)"
+  },
+  "StreamingLLM 2K": {
+    "active_tokens": 2048,
+    "needle_mass_pct": 0.19359189801561633,
+    "corona_mass_pct": 0.0,
+    "sdr": 1935918980.1561632,
+    "apophenia_index": 99.9,
+    "entropy": 7.624613816353678,
+    "status": "COMPROMISED (FAIL)"
+  },
+  "H2O 4K": {
+    "active_tokens": 4096,
+    "needle_mass_pct": 0.7798272346942725,
+    "corona_mass_pct": 1.2174101193006177,
+    "sdr": 0.6405624713734682,
+    "apophenia_index": 99.9,
+    "entropy": 8.31776095553879,
+    "status": "COMPROMISED (FAIL)"
+  },
+  "SnapKV 4K": {
+    "active_tokens": 4096,
+    "needle_mass_pct": 0.7798343620549529,
+    "corona_mass_pct": 1.2174212449337327,
+    "sdr": 0.6405624719465128,
+    "apophenia_index": 99.9,
+    "entropy": 8.317760996686008,
+    "status": "COMPROMISED (FAIL)"
+  },
+  "Base StrataKV": {
+    "active_tokens": 544,
+    "needle_mass_pct": 5.86139871017133,
+    "corona_mass_pct": 0.0,
+    "sdr": 58613987101.713295,
+    "apophenia_index": 16.82785107010479,
+    "entropy": 6.298941967910304,
+    "status": "COMPROMISED (FAIL)"
+  },
+  "StrataKV + Epistemic": {
+    "active_tokens": 32,
+    "needle_mass_pct": 100.00000000000003,
+    "corona_mass_pct": 0.0,
+    "sdr": 1000000000000.0002,
+    "apophenia_index": 0.0,
+    "entropy": 3.465720342273923,
+    "status": "IMMUNE (PASS)"
+  }
+}

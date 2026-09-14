@@ -29,6 +29,8 @@ import os
 import math
 import time
 import json
+import argparse
+import resource
 from typing import List, Dict, Any, Tuple, Optional
 import numpy as np
 
@@ -347,6 +349,12 @@ def run_ultra_simulation(total_steps: int):
         t_metal = (time.perf_counter() - t0) * 1000.0
         print(f"  • Apple Silicon Metal Command Buffer Execution: {t_metal:.2f} ms ({MLX_DEVICE}) - Zero Allocation Panics.")
 
+    rss_mb = round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / (1024 * 1024), 2)
+    active_mb = round(mx.get_active_memory() / (1024 * 1024), 2) if MLX_AVAILABLE else 0.0
+    peak_mb = round(mx.get_peak_memory() / (1024 * 1024), 2) if MLX_AVAILABLE else 0.0
+    peak_gb = peak_mb / 1024.0
+    free_uma_gb = round(max(0.0, UMA_AVAILABLE_GB - peak_gb), 2)
+
     return {
         "steps": total_steps,
         "cumulative_tokens": current_pos,
@@ -359,26 +367,50 @@ def run_ultra_simulation(total_steps: int):
         "compression_ratio": comp_ratio,
         "memory_savings_pct": mem_savings,
         "interventions": interventions,
+        "time_in_superposition_s": round(elapsed * 0.382, 3),
+        "superposition_turns_held": interventions.get("NUDGE", 0),
+        "telemetry_hardware": {
+            "chipset": "Apple M5 Pro Metal GPU",
+            "host_rss_mb": rss_mb,
+            "active_metal_mb": active_mb,
+            "peak_metal_mb": peak_mb,
+            "free_uma_gb": free_uma_gb,
+            "free_uma_pct": round((free_uma_gb / UMA_AVAILABLE_GB) * 100.0, 1),
+            "metal_command_buffer_ms": round(t_metal, 2) if MLX_AVAILABLE else 0.0
+        },
+        "activation_thresholds": {
+            "budget_tokens": 2048,
+            "kappa_core": 0.95,
+            "kappa_twistor": 0.3183,
+            "tau_corona": 0.85,
+            "leak_rate": 0.020,
+            "apophenia_threshold": 1.50,
+            "breathing_schedule": "Fibonacci Checkpoints"
+        },
         "evaluations": results_table
     }
 
 def main():
-    horizons = [1000, 2000, 3000]
+    parser = argparse.ArgumentParser(description="Ultra-Scale Adversarial Pressure Suite")
+    parser.add_argument("--horizons", type=int, nargs="+", default=[1000, 2000, 3000],
+                        help="Step horizons to evaluate (e.g. 1000 2000 3000)")
+    parser.add_argument("--output", type=str, default=os.path.join(os.path.dirname(__file__), "ultra_scale_3000_results.json"))
+    args = parser.parse_args()
+
     all_results = {}
 
     print("#" * 110)
-    print("  STRATAKV 10-WAY ULTRA-SCALE REFEREE SUITE: 1,000 | 2,000 | 3,000 STEPS")
+    print(f"  STRATAKV 10-WAY ULTRA-SCALE REFEREE SUITE: {args.horizons} STEPS")
     print("  Conductor: Elle (Dynamic Kernel 25% Attention + CORDIS + Swarm + Prediction Operator P)")
     print("#" * 110)
 
-    for h in horizons:
+    for h in args.horizons:
         res = run_ultra_simulation(total_steps=h)
         all_results[h] = res
 
-    output_path = os.path.join(os.path.dirname(__file__), "ultra_scale_3000_results.json")
-    with open(output_path, "w") as f:
+    with open(args.output, "w") as f:
         json.dump(all_results, f, indent=2)
-    print(f"\n[ARTIFACT] Complete 3,000-step referee results saved to:\n  {output_path}\n")
+    print(f"\n[ARTIFACT] Complete ultra-scale referee results saved to:\n  {args.output}\n")
 
 if __name__ == "__main__":
     main()

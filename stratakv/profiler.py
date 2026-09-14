@@ -6,7 +6,7 @@ goal alignment, semantic persistence, and surprisal signals.
 """
 
 import math
-from typing import Optional
+from typing import Optional, Tuple, List, Dict, Any
 import numpy as np
 
 # Mathematical Constants
