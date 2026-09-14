@@ -1,4 +1,4 @@
-# StrataKV: The 3-Tier Breathing KV Cache
+ # StrataKV: The 3-Tier Breathing KV Cache
 ## Thermodynamic Memory Substrate for the 13-Sphere Differential Atlas & Resident Hybrid Transformers on Apple Silicon
 
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
